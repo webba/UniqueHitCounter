@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using BlazorApp.Shared;
 using System.Text.Json;
+using UniqueHitCounter.Logic;
+using Microsoft.Azure.Storage.Blob;
 
 namespace BlazorApp.Api
 {
@@ -16,8 +18,8 @@ namespace BlazorApp.Api
         [FunctionName("CombatLogFunction")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            [Blob("%BlobName%/%FullDataName%", FileAccess.Read)] Stream fullDataBlob,
-            [Blob("%BlobName%/%ResultsDataName%", FileAccess.Read)] Stream resultsDataBlob,
+            [Blob("%FullDataName%", FileAccess.Write)] CloudBlobContainer fullDataBlob,
+            [Blob("%ResultsDataName%", FileAccess.Write)] CloudBlobContainer resultsDataBlob,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -27,9 +29,13 @@ namespace BlazorApp.Api
                 PropertyNameCaseInsensitive = true 
             });
 
+            var result = LogParser.ParseCombatLog(combatPost);
 
+            var blobName = Guid.NewGuid().ToString();
+            var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
+            await fullBlockBlob.UploadTextAsync(JsonSerializer.Serialize(result));
 
-            return new OkObjectResult("");
+            return new OkObjectResult(blobName);
         }
     }
 }
