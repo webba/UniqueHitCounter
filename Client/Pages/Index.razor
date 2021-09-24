@@ -4,27 +4,24 @@
 @inject ILogger<Index> Logger
 @inject NavigationManager NavManager
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
-<EditForm Model="@combatPost" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@combatPost" OnValidSubmit="@HandleValidSubmit" class="form-group">
     <DataAnnotationsValidator />
     <ValidationSummary />
-    <label>
-    Name:
+    <div class="form-group">
+        <label>
+        Name:
+        </label>
+        <InputText id="name" @bind-Value="combatPost.Name" class="form-control"/>
+   </div>
+    <div>
+        <label>
+            Combat paste:
+        </label>
+        <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" class="form-control"/>
+    </div>
     <br />
-    <InputText id="name" @bind-Value="combatPost.Name" />
-    </label>
-    <br />
-    <label>
-    Combat paste:
-    <br />
-    <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" />
-    </label>
-    <br />
-    <button type="submit">Submit</button>
+    <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
 @code {
