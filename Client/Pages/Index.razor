@@ -2,6 +2,8 @@
 @using BlazorApp.Shared
 @using Microsoft.Extensions.Logging
 @inject ILogger<Index> Logger
+@inject NavigationManager NavManager
+
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
@@ -10,10 +12,17 @@ Welcome to your new app.
 <EditForm Model="@combatPost" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
-
-    <InputText id="name" @bind-Value="combatPost.Name" />
+    <label>
+    Name:
     <br />
-    <InputTextArea id="name" @bind-Value="combatPost.CombatString" />
+    <InputText id="name" @bind-Value="combatPost.Name" />
+    </label>
+    <br />
+    <label>
+    Combat paste:
+    <br />
+    <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" />
+    </label>
     <br />
     <button type="submit">Submit</button>
 </EditForm>
@@ -23,6 +32,8 @@ Welcome to your new app.
 
     private void HandleValidSubmit()
     {
+        string uqfilename = "abc";
         Logger.LogInformation("HandleValidSubmit called");
+        NavManager.NavigateTo($"/CombatTable?combatlog={uqfilename}");
     }
 }
