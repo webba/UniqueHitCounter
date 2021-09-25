@@ -1,4 +1,6 @@
 ﻿using BlazorApp.Shared;
+using BlazorApp.Shared.Entry;
+
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -46,16 +48,17 @@ namespace UniqueHitCounter.Logic
         private LogEntry ParseCombatLog(string v, int lineNumber)
         {
             var log = CleanDateAndTimeFromLogLine(v, lineNumber);
-            var handlers = new List<ILogLineHandler>() { 
+            var handlers = new List<ILogEntryHandler>() { 
                 new TryToEntryHandler(),
                 new CombatEntryHandler(),
             };
 
             foreach (var handler in handlers)
             {
-                if(handler.PreCondition(log.cleanedLog, log.datetime))
+                LogEntry logEntry = handler.Handle(log);
+                if (logEntry != null)
                 {
-                    return handler.Handle(log.cleanedLog, log.datetime);
+                    return logEntry;
                 }
             }
 
@@ -87,66 +90,6 @@ namespace UniqueHitCounter.Logic
                 default:
                     throw new ArgumentOutOfRangeException($"Logline contains to many segments: {logLine}");
             }
-        }
-    }
-
-    public interface ILogLineHandler
-    {
-        public bool PreCondition(string cleanedLog, DateTime dateTime);
-
-        public LogEntry Handle(string cleanedLog, DateTime dateTime);
-    }
-
-    public class LogEntryHandler : ILogLineHandler
-    {
-        public LogEntry Handle(string cleanedLog, DateTime dateTime)
-        {
-            return new LogEntry
-            {
-                Log = cleanedLog,
-                LogTime = dateTime
-            };
-        }
-
-        public bool PreCondition(string cleanedLog, DateTime dateTime)
-        {
-            return true;
-        }
-    }
-
-    public class TryToEntryHandler : ILogLineHandler
-    {
-        public LogEntry Handle(string cleanedLog, DateTime dateTime)
-        {
-            return new TryToEntry
-            {
-                Log = cleanedLog,
-                LogTime = dateTime,
-                Victim = "You"
-            };
-        }
-
-        public bool PreCondition(string cleanedLog, DateTime dateTime)
-        {
-            return cleanedLog.StartsWith("You try to");
-        }
-    }
-
-    public class CombatEntryHandler : ILogLineHandler
-    {
-        public LogEntry Handle(string cleanedLog, DateTime dateTime)
-        {
-            return new CombatEntry
-            {
-                Log = cleanedLog,
-                LogTime = dateTime,
-                HitType = "mauls"
-            };
-        }
-
-        public bool PreCondition(string cleanedLog, DateTime dateTime)
-        {
-            return cleanedLog.Contains("mauls");
         }
     }
 }

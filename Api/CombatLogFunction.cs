@@ -11,6 +11,7 @@ using UniqueHitCounter.Logic;
 using Microsoft.Azure.Storage.Blob;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using BlazorApp.Shared.Entry;
 
 namespace BlazorApp.Api
 {
