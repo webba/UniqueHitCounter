@@ -84,7 +84,7 @@ namespace UniqueHitCounter.Logic
                     TimeSpan.TryParse(v, out TimeSpan timeSpan);
                     if (_LastTime.HasValue)
                     {
-                        if (timeSpan >= new TimeSpan(0, 0, 0) && _LastTime.Value.TimeOfDay < new TimeSpan(0, 0, 0))
+                        if (timeSpan < new TimeSpan(15, 0, 0) && _LastTime.Value.TimeOfDay > new TimeSpan(15, 0, 0))
                         {
                             _CurrentTime = _CurrentTime.AddDays(1);
                         }
