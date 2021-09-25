@@ -11,5 +11,6 @@ namespace BlazorApp.Shared
         public string Name { get; set; }
         [Required]
         public string CombatString { get; set; }
+        public DateTime StartDate { get; set; }
     }
 }
