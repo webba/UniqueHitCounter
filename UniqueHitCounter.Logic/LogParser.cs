@@ -12,15 +12,19 @@ namespace UniqueHitCounter.Logic
 
             foreach (var line in post.CombatString.Trim().Split('\n'))
             {
-                Console.WriteLine(line);    
-                result.Add(new CombatEntry()
-                {
-                    Log = line.Trim()
-                });
+                Console.WriteLine(line);
+                result.Add(ParseCombatLog(line.Trim())) ;
             }
 
-
             return result;
+        }
+
+        private static CombatEntry ParseCombatLog(string v)
+        {
+
+
+
+            throw new NotImplementedException();
         }
     }
 }
