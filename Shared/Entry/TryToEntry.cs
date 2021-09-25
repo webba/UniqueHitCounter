@@ -1,32 +1,25 @@
 ﻿
 using System;
+using System.Text.RegularExpressions;
 
 namespace BlazorApp.Shared.Entry
 {
     public class TryToEntry : LogEntry
     {
-        public string Attacker { get; set; }
+        public TryToEntry()
+        {
+        }
 
-        public string Victim { get; set; }
-
-        public string HitType { get; set; }
+        public TryToEntry((string cleanedLog, DateTime datetime) log) : base(log)
+        {
+        }
     }
 
     public class TryToEntryHandler : ILogEntryHandler
     {
         public LogEntry Handle((string cleanedLog, DateTime datetime) log)
         {
-            if (log.cleanedLog.StartsWith("You try to"))
-            {
-
-            }
-            return new TryToEntry
-            {
-                Log = log.cleanedLog,
-                LogTime = log.datetime,
-                Victim = "You"
-            };
+            return log.cleanedLog.StartsWith("You try to") || log.cleanedLog.Contains("tries to") ? new TryToEntry(log) : null;
         }
-
     }
 }

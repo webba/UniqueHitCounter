@@ -7,6 +7,16 @@ namespace BlazorApp.Shared.Entry
 {
     public class LogEntry
     {
+        public LogEntry()
+        {
+
+        }
+        public LogEntry((string cleanedLog, DateTime datetime) log)
+        {
+            Log = log.cleanedLog;
+            LogTime = log.datetime;
+        }
+
         public string Log { get; set; }
 
         public DateTime LogTime { get; set; }
