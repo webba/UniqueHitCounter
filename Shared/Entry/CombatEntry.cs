@@ -27,7 +27,7 @@ namespace BlazorApp.Shared.Entry
 
     public class CombatEntryHandler : ILogEntryHandler
     {
-        public LogEntry Handle((string cleanedLog, DateTime datetime) log)
+        public LogEntry Handle((string cleanedLog, DateTime datetime) log, string characterName)
         {
             return null;
             return new CombatEntry

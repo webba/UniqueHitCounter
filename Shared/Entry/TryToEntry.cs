@@ -17,7 +17,7 @@ namespace BlazorApp.Shared.Entry
 
     public class TryToEntryHandler : ILogEntryHandler
     {
-        public LogEntry Handle((string cleanedLog, DateTime datetime) log)
+        public LogEntry Handle((string cleanedLog, DateTime datetime) log, string characterName)
         {
             return log.cleanedLog.StartsWith("You try to") || log.cleanedLog.Contains("tries to") ? new TryToEntry(log) : null;
         }

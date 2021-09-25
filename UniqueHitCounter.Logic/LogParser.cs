@@ -34,7 +34,7 @@ namespace UniqueHitCounter.Logic
                     continue;
                 }
 
-                result.Add(ParseCombatLog(line,i));
+                result.Add(ParseCombatLog(line,i, _LogPost.Name));
             }
             return result;
         }
@@ -46,7 +46,7 @@ namespace UniqueHitCounter.Logic
             _CurrentTime = currentTime;
         }
 
-        private LogEntry ParseCombatLog(string v, int lineNumber)
+        private LogEntry ParseCombatLog(string v, int lineNumber, string characterName)
         {
             var log = CleanDateAndTimeFromLogLine(v, lineNumber);
             var handlers = new List<ILogEntryHandler>() { 
@@ -56,7 +56,7 @@ namespace UniqueHitCounter.Logic
 
             foreach (var handler in handlers)
             {
-                LogEntry logEntry = handler.Handle(log);
+                LogEntry logEntry = handler.Handle(log, characterName);
                 if (logEntry != null)
                 {
                     return logEntry;
