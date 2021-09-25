@@ -76,20 +76,26 @@ namespace UniqueHitCounter.Logic
             {
                 case 1:
                     DateTime dateTime = _CurrentTime == null ? DateTime.UtcNow.AddSeconds(lineNumber) : _CurrentTime.AddSeconds(lineNumber);
-                    return (logLine, dateTime);
+                    return (CleanLogLine(logLine), dateTime);
                 case 2:
                     string v = logSegments[0].Replace("[", String.Empty);
                     TimeSpan.TryParse(v, out TimeSpan timeSpan);
-                    return (logSegments[1].Trim(), _CurrentTime + timeSpan);
+                    return (CleanLogLine(logSegments[1]).Trim(), _CurrentTime + timeSpan);
                 case 3:
                     string dateSegment = logSegments[0].Replace("[", String.Empty);
                     DateTime.TryParse(dateSegment, out DateTime dateTime3);
                     string timeSegment = logSegments[1].Replace("[", String.Empty);
                     TimeSpan.TryParse(timeSegment, out TimeSpan timeSpan3);
-                    return (logSegments[2].Trim(), dateTime3 + timeSpan3);
+                    return (CleanLogLine(logSegments[2]), dateTime3 + timeSpan3);
                 default:
                     throw new ArgumentOutOfRangeException($"Logline contains to many segments: {logLine}");
             }
         }
+
+        private string CleanLogLine(string logline)
+        {
+            return logline.Trim().Remove(logline.Length - 1);
+        }
+
     }
 }
