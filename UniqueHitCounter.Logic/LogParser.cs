@@ -46,36 +46,24 @@ namespace UniqueHitCounter.Logic
         private LogEntry ParseCombatLog(string v, int lineNumber)
         {
             var log = CleanDateAndTimeFromLogLine(v, lineNumber);
+            var handlers = new List<ILogLineHandler>() { 
+                new TryToEntryHandler(),
+                new CombatEntryHandler(),
+            };
 
+            foreach (var handler in handlers)
+            {
+                if(handler.PreCondition(log.cleanedLog, log.datetime))
+                {
+                    return handler.Handle(log.cleanedLog, log.datetime);
+                }
+            }
 
-            if (log.cleanedLog.StartsWith("You try to"))
+            return new LogEntry
             {
-                var entry = new TryToEntry
-                {
-                    Log = log.cleanedLog,
-                    LogTime = log.datetime,
-                };
-                entry.Victim = "you";
-                return entry;
-            }
-            else if (ContainsMaul(log,out ))
-            {
-                var entry = new CombatEntry
-                {
-                    Log = log.cleanedLog,
-                    LogTime = log.datetime,
-                };
-                entry.HitType ="mauls";
-                return entry;
-            }
-            else
-            {
-                return new LogEntry
-                {
-                    Log = log.cleanedLog,
-                    LogTime = log.datetime,
-                };
-            }
+                Log = log.cleanedLog,
+                LogTime = log.datetime
+            };
         }
 
         private (string cleanedLog, DateTime datetime) CleanDateAndTimeFromLogLine(string logLine, int lineNumber)
@@ -99,6 +87,66 @@ namespace UniqueHitCounter.Logic
                 default:
                     throw new ArgumentOutOfRangeException($"Logline contains to many segments: {logLine}");
             }
+        }
+    }
+
+    public interface ILogLineHandler
+    {
+        public bool PreCondition(string cleanedLog, DateTime dateTime);
+
+        public LogEntry Handle(string cleanedLog, DateTime dateTime);
+    }
+
+    public class LogEntryHandler : ILogLineHandler
+    {
+        public LogEntry Handle(string cleanedLog, DateTime dateTime)
+        {
+            return new LogEntry
+            {
+                Log = cleanedLog,
+                LogTime = dateTime
+            };
+        }
+
+        public bool PreCondition(string cleanedLog, DateTime dateTime)
+        {
+            return true;
+        }
+    }
+
+    public class TryToEntryHandler : ILogLineHandler
+    {
+        public LogEntry Handle(string cleanedLog, DateTime dateTime)
+        {
+            return new TryToEntry
+            {
+                Log = cleanedLog,
+                LogTime = dateTime,
+                Victim = "You"
+            };
+        }
+
+        public bool PreCondition(string cleanedLog, DateTime dateTime)
+        {
+            return cleanedLog.StartsWith("You try to");
+        }
+    }
+
+    public class CombatEntryHandler : ILogLineHandler
+    {
+        public LogEntry Handle(string cleanedLog, DateTime dateTime)
+        {
+            return new CombatEntry
+            {
+                Log = cleanedLog,
+                LogTime = dateTime,
+                HitType = "mauls"
+            };
+        }
+
+        public bool PreCondition(string cleanedLog, DateTime dateTime)
+        {
+            return cleanedLog.Contains("mauls");
         }
     }
 }
