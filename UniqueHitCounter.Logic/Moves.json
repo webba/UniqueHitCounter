@@ -1,0 +1,282 @@
+[
+  {
+    "name": "Sludge",
+    "ActorMessage": "duck low and hit",
+    "OthersMessage": "ducks low and hits"
+  },
+  {
+    "name": "Falcon",
+    "ActorMessage": "knock",
+    "OthersMessage": "knocks"
+  },
+  {
+    "name": "Narrower",
+    "ActorMessage": "strongly pierce",
+    "OthersMessage": "strongly pierces"
+  },
+  {
+    "name": "Crayfish",
+    "ActorMessage": "stab",
+    "OthersMessage": "stabs"
+  },
+  {
+    "name": "Mommys pearl",
+    "ActorMessage": "stab",
+    "OthersMessage": "stabs"
+  },
+  {
+    "name": "Motley visions",
+    "ActorMessage": "punch holes in",
+    "OthersMessage": "punches holes in"
+  },
+  {
+    "name": "Carver",
+    "ActorMessage": "engrave",
+    "OthersMessage": "engraves"
+  },
+  {
+    "name": "False props",
+    "ActorMessage": "fool and cut",
+    "OthersMessage": "fools and cuts"
+  },
+  {
+    "name": "Flurry of pain",
+    "ActorMessage": "assault",
+    "OthersMessage": "assaults"
+  },
+  {
+    "name": "Twilfit twin",
+    "ActorMessage": "doubly slash",
+    "OthersMessage": "doubly slashes"
+  },
+  {
+    "name": "Union of the snake",
+    "ActorMessage": "pound",
+    "OthersMessage": "pounds"
+  },
+  {
+    "name": "Sour marmalade",
+    "ActorMessage": "squish",
+    "OthersMessage": "squishes"
+  },
+  {
+    "name": "Minikill",
+    "ActorMessage": "bonk",
+    "OthersMessage": "bonks"
+  },
+  {
+    "name": "Golem roar",
+    "ActorMessage": "devastate",
+    "OthersMessage": "devastates"
+  },
+  {
+    "name": "Dragontail",
+    "ActorMessage": "whip",
+    "OthersMessage": "whips"
+  },
+  {
+    "name": "Wanderer",
+    "ActorMessage": "stomp",
+    "OthersMessage": "stomps"
+  },
+  {
+    "name": "Horses ass",
+    "ActorMessage": "restructure",
+    "OthersMessage": "restructures"
+  },
+  {
+    "name": "Slow scorpio",
+    "ActorMessage": "sting",
+    "OthersMessage": "stings"
+  },
+  {
+    "name": "Moist hind",
+    "ActorMessage": "stab",
+    "OthersMessage": "stabs"
+  },
+  {
+    "name": "Mask of defiance",
+    "ActorMessage": "punch holes in",
+    "OthersMessage": "punches holes in"
+  },
+  {
+    "name": "Red wind",
+    "ActorMessage": "engrave",
+    "OthersMessage": "engraves"
+  },
+  {
+    "name": "Dark grace",
+    "ActorMessage": "grace",
+    "OthersMessage": "graces"
+  },
+  {
+    "name": "Hurting scion",
+    "ActorMessage": "cut open",
+    "OthersMessage": "cuts open"
+  },
+  {
+    "name": "True blood",
+    "ActorMessage": "whip",
+    "OthersMessage": "whips"
+  },
+  {
+    "name": "Kiss goodnight",
+    "ActorMessage": "pound",
+    "OthersMessage": "pounds"
+  },
+  {
+    "name": "Squarepusher",
+    "ActorMessage": "maul",
+    "OthersMessage": "mauls"
+  },
+  {
+    "name": "Double impact",
+    "ActorMessage": "gong-gong",
+    "OthersMessage": "gong-gongs"
+  },
+  {
+    "name": "Dissolver",
+    "ActorMessage": "dissolve",
+    "OthersMessage": "dissolves"
+  },
+  {
+    "name": "Cricket",
+    "ActorMessage": "string",
+    "OthersMessage": "strings"
+  },
+  {
+    "name": "Faithpush",
+    "ActorMessage": "stomp",
+    "OthersMessage": "stomps"
+  },
+  {
+    "name": "Rampant delusion",
+    "ActorMessage": "puncture",
+    "OthersMessage": "punctures"
+  },
+  {
+    "name": "Burning swamp",
+    "ActorMessage": "stab",
+    "OthersMessage": "stabs"
+  },
+  {
+    "name": "Sensitive warden",
+    "ActorMessage": "penetrate",
+    "OthersMessage": "penetrates"
+  },
+  {
+    "name": "Prod",
+    "ActorMessage": "punch holes in",
+    "OthersMessage": "punches holes in"
+  },
+  {
+    "name": "Bonebringer",
+    "ActorMessage": "dissect",
+    "OthersMessage": "dissects"
+  },
+  {
+    "name": "Winged fang",
+    "ActorMessage": "paint",
+    "OthersMessage": "paints"
+  },
+  {
+    "name": "Firefangs",
+    "ActorMessage": "cut",
+    "OthersMessage": "cuts"
+  },
+  {
+    "name": "Wild garden",
+    "ActorMessage": "redecorate",
+    "OthersMessage": "redecorates"
+  },
+  {
+    "name": "Bonker",
+    "ActorMessage": "pound",
+    "OthersMessage": "pounds"
+  },
+  {
+    "name": "Rotten stomach",
+    "ActorMessage": "jam",
+    "OthersMessage": "jams"
+  },
+  {
+    "name": "Pain thing",
+    "ActorMessage": "hurt",
+    "OthersMessage": "hurts"
+  },
+  {
+    "name": "Triple impact",
+    "ActorMessage": "bowl",
+    "OthersMessage": "bowls"
+  },
+  {
+    "name": "Low rider",
+    "ActorMessage": "duck low and hit",
+    "OthersMessage": "ducks low and hits"
+  },
+  {
+    "name": "Cold clouds",
+    "ActorMessage": "knock",
+    "OthersMessage": "knocks"
+  },
+  {
+    "name": "Back breaker",
+    "ActorMessage": "engrave",
+    "OthersMessage": "engraves"
+  },
+  {
+    "name": "Bloodscion",
+    "ActorMessage": "lunge and cut",
+    "OthersMessage": "lunges and cuts"
+  },
+  {
+    "name": "Raktaktak",
+    "ActorMessage": "assault",
+    "OthersMessage": "assaults"
+  },
+  {
+    "name": "Tattoo twice",
+    "ActorMessage": "doubly grind",
+    "OthersMessage": "doubly grinds"
+  },
+  {
+    "name": "Sleepwalker",
+    "ActorMessage": "pound",
+    "OthersMessage": "pounds"
+  },
+  {
+    "name": "Hammerhand",
+    "ActorMessage": "spruce",
+    "OthersMessage": "spruces"
+  },
+  {
+    "name": "Echo pain",
+    "ActorMessage": "impact",
+    "OthersMessage": "impacts"
+  },
+  {
+    "name": "High number",
+    "ActorMessage": "numb",
+    "OthersMessage": "numbs"
+  },
+  {
+    "name": "Sharp twig",
+    "ActorMessage": "puncture",
+    "OthersMessage": "punctures"
+  },
+  {
+    "name": "Snakebite",
+    "ActorMessage": "stab",
+    "OthersMessage": "stabs"
+  },
+  {
+    "name": "Eyesocket",
+    "ActorMessage": "penetrate",
+    "OthersMessage": "penetrates"
+  },
+  {
+    "name": "Red flood",
+    "ActorMessage": "open up",
+    "OthersMessage": "opens up"
+  }
+]
