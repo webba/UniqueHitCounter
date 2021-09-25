@@ -7,10 +7,10 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using BlazorApp.Shared;
-using System.Text.Json;
 using UniqueHitCounter.Logic;
 using Microsoft.Azure.Storage.Blob;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace BlazorApp.Api
 {
@@ -25,12 +25,9 @@ namespace BlazorApp.Api
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
             string body = await req.ReadAsStringAsync();
-            var combatPost = JsonSerializer.Deserialize<CombatPost>(body, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var combatPost = JsonConvert.DeserializeObject<CombatPost>(body);
             LogParser logParser = new LogParser(combatPost);
-            IEnumerable<CombatEntry> result = logParser.ParseCombatLog();
+            IEnumerable<object> result = logParser.ParseCombatLog();
 
             var blobName = Guid.NewGuid().ToString();
             CombatResults combatResults = new CombatResults { 
@@ -52,8 +49,11 @@ namespace BlazorApp.Api
                 } 
             };
 
-            await SaveFile(fullDataBlob, JsonSerializer.Serialize(result), blobName);
-            await SaveFile(resultsDataBlob, JsonSerializer.Serialize(combatResults), blobName);
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+
+            string result1 = JsonConvert.SerializeObject(result, settings);
+            await SaveFile(fullDataBlob, result1, blobName);
+            await SaveFile(resultsDataBlob, JsonConvert.SerializeObject(combatResults, settings), blobName);
 
             return new OkObjectResult(blobName);
         }
@@ -75,8 +75,8 @@ namespace BlazorApp.Api
 
             var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
             string v = await fullBlockBlob.DownloadTextAsync();
-
-            IEnumerable <CombatEntry> combatEntry = JsonSerializer.Deserialize<IEnumerable<CombatEntry>>(v, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+            IEnumerable<LogEntry> combatEntry = JsonConvert.DeserializeObject<IEnumerable<LogEntry>>(v, settings);
 
             return new OkObjectResult(combatEntry);
         }
@@ -92,7 +92,7 @@ namespace BlazorApp.Api
             var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
             string v = await fullBlockBlob.DownloadTextAsync();
 
-            CombatResults combatEntry = JsonSerializer.Deserialize<CombatResults>(v, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            CombatResults combatEntry = JsonConvert.DeserializeObject<CombatResults>(v);
 
             return new OkObjectResult(combatEntry);
         }

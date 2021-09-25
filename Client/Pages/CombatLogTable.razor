@@ -17,7 +17,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (CombatEntry combatEntry in entry)
+            @foreach (LogEntry combatEntry in entry)
             {
                 <tr>
                     <td>@combatEntry.Log</td>
@@ -31,10 +31,10 @@ else
 	[Parameter]
 	public string page { get; set; }
 
-    private IEnumerable<CombatEntry> entry;
+    private IEnumerable<LogEntry> entry;
 
 	protected override async Task OnInitializedAsync()
     {
-		entry = await httpClient.GetFromJsonAsync<IEnumerable<CombatEntry>>($"/api/CombatLogGetFunction/{page}");
+		entry = await httpClient.GetFromJsonAsync<IEnumerable<LogEntry>>($"/api/CombatLogGetFunction/{page}");
 	}
 }

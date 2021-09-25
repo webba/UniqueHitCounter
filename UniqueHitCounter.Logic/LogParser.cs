@@ -16,9 +16,9 @@ namespace UniqueHitCounter.Logic
             _CurrentTime = post.StartDate;
         }
 
-        public IEnumerable<CombatEntry> ParseCombatLog()
+        public IEnumerable<LogEntry> ParseCombatLog()
         {
-            IList<CombatEntry> result = new List<CombatEntry>();
+            IList<LogEntry> result = new List<LogEntry>();
 
             string[] combatLines = _LogPost.CombatString.Trim().Split('\n');
             for (int i = 0; i < combatLines.Length; i++)
@@ -43,15 +43,39 @@ namespace UniqueHitCounter.Logic
             _CurrentTime = currentTime;
         }
 
-        private CombatEntry ParseCombatLog(string v, int lineNumber)
+        private LogEntry ParseCombatLog(string v, int lineNumber)
         {
-            (string cleanedLog, DateTime datetime) = CleanDateAndTimeFromLogLine(v, lineNumber);
-            return new CombatEntry
-            {
-                Log = cleanedLog,
-                LogTime = datetime,
-            };
+            var log = CleanDateAndTimeFromLogLine(v, lineNumber);
 
+
+            if (log.cleanedLog.StartsWith("You try to"))
+            {
+                var entry = new TryToEntry
+                {
+                    Log = log.cleanedLog,
+                    LogTime = log.datetime,
+                };
+                entry.Victim = "you";
+                return entry;
+            }
+            else if (ContainsMaul(log,out ))
+            {
+                var entry = new CombatEntry
+                {
+                    Log = log.cleanedLog,
+                    LogTime = log.datetime,
+                };
+                entry.HitType ="mauls";
+                return entry;
+            }
+            else
+            {
+                return new LogEntry
+                {
+                    Log = log.cleanedLog,
+                    LogTime = log.datetime,
+                };
+            }
         }
 
         private (string cleanedLog, DateTime datetime) CleanDateAndTimeFromLogLine(string logLine, int lineNumber)
