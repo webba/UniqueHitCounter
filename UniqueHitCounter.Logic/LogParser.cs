@@ -7,9 +7,7 @@ namespace UniqueHitCounter.Logic
 {
     public class LogParser
     {
-        private const string _TimePattern = @"\[[0-9]{2}:[0-9]{2}:[0-9]{2}]";
         private readonly CombatPost _LogPost;
-        private string? _LogLineWithoutDate = null;
         private DateTime _CurrentTime;
 
         public LogParser(CombatPost post)
@@ -47,7 +45,7 @@ namespace UniqueHitCounter.Logic
 
         private CombatEntry ParseCombatLog(string v, int lineNumber)
         {
-            (string cleanedLog, DateTime datetime) = GetDateTime(v, lineNumber);
+            (string cleanedLog, DateTime datetime) = CleanDateAndTimeFromLogLine(v, lineNumber);
             return new CombatEntry
             {
                 Log = cleanedLog,
@@ -56,28 +54,26 @@ namespace UniqueHitCounter.Logic
 
         }
 
-        private (string cleanedLog, DateTime datetime) GetDateTime(string logLine, int lineNumber)
+        private (string cleanedLog, DateTime datetime) CleanDateAndTimeFromLogLine(string logLine, int lineNumber)
         {
             string[] logSegments = logLine.Split(']');
-
-            if(logSegments.Length == 1)
+            switch (logSegments.Length)
             {
-                DateTime dateTime = _CurrentTime == null ? DateTime.UtcNow.AddSeconds(lineNumber) : _CurrentTime.AddSeconds(lineNumber);
-                return (logLine, dateTime);
-            }
-            else if (logSegments.Length == 2)
-            {
-                string v = logSegments[0].Replace("[", String.Empty);
-                TimeSpan.TryParse(v, out TimeSpan timeSpan);
-                return (logSegments[1].Trim(), _CurrentTime + timeSpan);
-            }
-            else
-            {
-                string dateSegment = logSegments[0].Replace("[", String.Empty);
-                DateTime.TryParse(dateSegment, out DateTime dateTime);
-                string timeSegment = logSegments[1].Replace("[", String.Empty);
-                TimeSpan.TryParse(timeSegment, out TimeSpan timeSpan);
-                return (logSegments[2].Trim(), dateTime + timeSpan);
+                case 1:
+                    DateTime dateTime = _CurrentTime == null ? DateTime.UtcNow.AddSeconds(lineNumber) : _CurrentTime.AddSeconds(lineNumber);
+                    return (logLine, dateTime);
+                case 2:
+                    string v = logSegments[0].Replace("[", String.Empty);
+                    TimeSpan.TryParse(v, out TimeSpan timeSpan);
+                    return (logSegments[1].Trim(), _CurrentTime + timeSpan);
+                case 3:
+                    string dateSegment = logSegments[0].Replace("[", String.Empty);
+                    DateTime.TryParse(dateSegment, out DateTime dateTime3);
+                    string timeSegment = logSegments[1].Replace("[", String.Empty);
+                    TimeSpan.TryParse(timeSegment, out TimeSpan timeSpan3);
+                    return (logSegments[2].Trim(), dateTime3 + timeSpan3);
+                default:
+                    throw new ArgumentOutOfRangeException($"Logline contains to many segments: {logLine}");
             }
         }
     }
