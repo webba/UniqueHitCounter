@@ -29,6 +29,7 @@ namespace BlazorApp.Shared.Entry
     {
         public LogEntry Handle((string cleanedLog, DateTime datetime) log)
         {
+            return null;
             return new CombatEntry
             {
                 Log = log.cleanedLog,

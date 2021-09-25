@@ -11,6 +11,7 @@ namespace UniqueHitCounter.Logic
     {
         private readonly CombatPost _LogPost;
         private DateTime _CurrentTime;
+        private DateTime? _LastTime = null;
 
         public LogParser(CombatPost post)
         {
@@ -80,10 +81,19 @@ namespace UniqueHitCounter.Logic
                 case 2:
                     string v = logSegments[0].Replace("[", String.Empty);
                     TimeSpan.TryParse(v, out TimeSpan timeSpan);
-                    return (CleanLogLine(logSegments[1]).Trim(), _CurrentTime + timeSpan);
+                    if (_LastTime.HasValue)
+                    {
+                        if (timeSpan >= new TimeSpan(0, 0, 0) && _LastTime.Value.TimeOfDay < new TimeSpan(0, 0, 0))
+                        {
+                            _CurrentTime = _CurrentTime.AddDays(1);
+                        }
+                    }
+                    DateTime dateTime1 = _CurrentTime + timeSpan;
+                    _LastTime = dateTime1;
+                    return (CleanLogLine(logSegments[1]), dateTime1);
                 case 3:
-                    string dateSegment = logSegments[0].Replace("[", String.Empty);
-                    DateTime.TryParse(dateSegment, out DateTime dateTime3);
+                    string dateSegment1 = logSegments[0].Replace("[", String.Empty);
+                    DateTime.TryParse(dateSegment1, out DateTime dateTime3);
                     string timeSegment = logSegments[1].Replace("[", String.Empty);
                     TimeSpan.TryParse(timeSegment, out TimeSpan timeSpan3);
                     return (CleanLogLine(logSegments[2]), dateTime3 + timeSpan3);
@@ -94,7 +104,8 @@ namespace UniqueHitCounter.Logic
 
         private string CleanLogLine(string logline)
         {
-            return logline.Trim().Remove(logline.Length - 1);
+            string v1 = logline.Trim();
+            return v1.Remove(v1.Length - 1).Trim();
         }
 
     }

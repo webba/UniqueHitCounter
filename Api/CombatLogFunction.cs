@@ -24,21 +24,25 @@ namespace BlazorApp.Api
             [Blob("%ResultsDataName%", FileAccess.Write)] CloudBlobContainer resultsDataBlob,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-            string body = await req.ReadAsStringAsync();
-            var combatPost = JsonConvert.DeserializeObject<CombatPost>(body);
-            LogParser logParser = new LogParser(combatPost);
-            IEnumerable<object> result = logParser.ParseCombatLog();
 
-            var blobName = Guid.NewGuid().ToString();
-            CombatResults combatResults = new CombatResults { 
-                Created = DateTime.Now,
-                Creator = combatPost.Name,
-                FightStart = DateTime.Now,
-                FightEnd = DateTime.Now,
-                CombatResultsList = new List<CombatResult>() 
-                { 
-                    new CombatResult { 
+            try
+            {
+                log.LogInformation("C# HTTP trigger function processed a request.");
+                string body = await req.ReadAsStringAsync();
+                var combatPost = JsonConvert.DeserializeObject<CombatPost>(body);
+                LogParser logParser = new LogParser(combatPost);
+                IEnumerable<object> result = logParser.ParseCombatLog();
+
+                var blobName = Guid.NewGuid().ToString();
+                CombatResults combatResults = new CombatResults
+                {
+                    Created = DateTime.Now,
+                    Creator = combatPost.Name,
+                    FightStart = DateTime.Now,
+                    FightEnd = DateTime.Now,
+                    CombatResultsList = new List<CombatResult>()
+                {
+                    new CombatResult {
                         Player = "test",
                         BiggestHit = "test",
                         Hits = 10,
@@ -46,17 +50,23 @@ namespace BlazorApp.Api
                         TimesHit = 10,
                         TimesStunned = 10,
                         TimesThrown = 10
-                    } 
-                } 
-            };
+                    }
+                }
+                };
 
-            JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+                JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
 
-            string result1 = JsonConvert.SerializeObject(result, settings);
-            await SaveFile(fullDataBlob, result1, blobName);
-            await SaveFile(resultsDataBlob, JsonConvert.SerializeObject(combatResults, settings), blobName);
+                string result1 = JsonConvert.SerializeObject(result, settings);
+                await SaveFile(fullDataBlob, result1, blobName);
+                await SaveFile(resultsDataBlob, JsonConvert.SerializeObject(combatResults, settings), blobName);
 
-            return new OkObjectResult(blobName);
+                return new OkObjectResult(blobName);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
         }
 
         private static async Task SaveFile(CloudBlobContainer fullDataBlob, string result, string blobName)
