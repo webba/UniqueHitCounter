@@ -3,6 +3,8 @@
 @using Microsoft.Extensions.Logging
 @inject ILogger<Index> Logger
 @inject NavigationManager NavManager
+@inject HttpClient Http
+
 
 
 <EditForm Model="@combatPost" OnValidSubmit="@HandleValidSubmit" class="form-group">
@@ -10,27 +12,109 @@
     <ValidationSummary />
     <div class="form-group">
         <label>
-        Name:
+            Name:
         </label>
-        <InputText id="name" @bind-Value="combatPost.Name" class="form-control"/>
-   </div>
+        <InputText id="name" @bind-Value="combatPost.Name" class="form-control" />
+    </div>
     <div>
         <label>
             Combat paste:
         </label>
-        <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" class="form-control"/>
+        <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" class="form-control" />
     </div>
     <br />
     <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
 @code {
-    private CombatPost combatPost = new();
 
-    private void HandleValidSubmit()
+#region stuff
+    //[20:02:39] Karlfranz pierces The aged starving kyklops deadly hard in the chest and slaps it.
+    private CombatPost combatPost = new CombatPost{Name = "stuff", CombatString = @"Logging started 2021-07-03
+    [00:50:26] Aged huge spider moves in to attack you.
+    [01:00:46] Old hell hound moves in to attack you.
+    [01:00:48] Old hell hound tries to move into position to target your left parts.
+    [01:00:49] Old hell hound targets your left parts.
+    [01:00:54] Venerable mountain lion moves in to attack you.
+    [01:01:01] Venerable brown bear moves in to attack you.
+    [01:01:37] Venerable lurking huge spider moves in to attack you.
+    [01:09:23] Old troll moves in to attack you.
+    [01:14:09] Aged brown bear moves in to attack you.
+    [01:14:15] Aged brown bear mauls you hard in the chest and irritates it.
+    [01:14:19] Aged brown bear tries to move into position to target your upper left parts.
+    [01:14:21] Aged brown bear targets your upper left parts.
+    [01:14:22] The attack to the left upper arm glances off your armour.
+    [01:14:23] Aged brown bear suddenly goes into a frenzy.
+    [01:14:26] The attack to the top of the back glances off your armour.
+    [01:14:28] Aged brown bear tries to move into position to target your left parts.
+    [01:14:29] Aged brown bear targets your left parts.
+    [01:14:30] Aged brown bear mauls you very hard in the left underarm and hurts it.
+    [01:14:34] You cut aged brown bear deadly hard in the stomach and damage it.
+    [01:14:34] The attack to the lower back glances off your armour.
+    [01:14:40] You cut aged brown bear deadly hard in the left underarm and damage it.
+    [01:14:41] Aged brown bear mauls you very hard in the stomach and hurts it.
+    [01:14:46] You safely parry with your huge axe.
+    [01:14:46] The attack to the left thigh glances off your armour.
+    [01:14:47] You cut aged brown bear deadly hard in the chest and damage it.
+    [01:20:51] Venerable greenish huge spider moves in to attack you.
+    [01:21:13] Old sly black wolf moves in to attack you.
+    [01:22:03] You try to cut venerable greenish huge spider.
+    [01:30:07] Adolescent hell hound moves in to attack you.
+    [01:30:08] Adolescent hell hound suddenly goes into a frenzy.
+    [01:32:26] Old huge spider moves in to attack you.
+    [01:38:30] Old alert black bear moves in to attack you.
+    [01:45:03] Mature scorpion moves in to attack you.
+    Logging started 2021-07-03
+    [20:48:18] You try to cut venerable fat Wildsage 'Dok'.
+    [20:48:18] He is targetting your mid center parts.
+    [20:48:22] Venerable fat Wildsage 'Dok' tries to move into position to target your left parts.
+    [20:48:24] Venerable fat Wildsage 'Dok' targets your left parts.
+    [20:49:44] You try to cut venerable fat Wildsage 'Dok'.
+    [20:49:46] You try to cut venerable fat Wildsage 'Dok'.
+    [20:49:47] You try to cut venerable fat Wildsage 'Dok'.
+    [20:49:48] You try to cut venerable fat Wildsage 'Dok'.
+    [20:49:53] You try to cut venerable fat Wildsage 'Dok'.
+    [20:49:53] Venerable fat Wildsage 'Dok' tries to move into position to target your upper right parts.
+    [20:50:17] Venerable fat Wildsage 'Dok' moves in to attack you.
+    [20:50:58] You try to cut venerable fat Wildsage 'Dok'.
+    [20:50:58] Venerable fat Wildsage 'Dok' moves in to attack you.
+    [20:56:40] Venerable scorpion moves in to attack you.
+    [21:02:44] You open yourself to an attack from venerable brown bear.
+    [21:03:29] Aged anaconda moves in to attack you.
+    Logging started 2021-07-11
+    [00:24:10] Mature brown bear moves in to attack you.
+    Logging started 2021-07-23
+    [23:31:38] Aged hell hound moves in to attack you.
+    [23:31:39] Aged crocodile moves in to attack you.
+    [00:22:18] Adolescent greenish black bear moves in to attack you.
+    [00:34:29] You are not attacking anyone.
+    [00:38:28] You try to cut adolescent greenish black bear.
+    [00:38:28] Adolescent greenish black bear moves in to attack you.
+    [00:38:33] Adolescent greenish black bear mauls you very hard in the right thigh and hurts it.
+    [00:38:33] You cut adolescent greenish black bear deadly hard in the left thigh and damage it.
+    [00:38:37] The attack to the stomach glances off your armour.
+    [00:38:39] You cut adolescent greenish black bear deadly hard in the right thigh and damage it.
+    [00:38:42] The attack to the chest glances off your armour.
+    [00:38:45] You miss with the huge axe.
+    [00:38:46] Adolescent greenish black bear mauls you very hard in the left underarm and irritates it.
+    [00:38:48] Adolescent greenish black bear tries to move into position to target your lower left parts.
+    [00:38:49] Adolescent greenish black bear targets your lower left parts.
+    [00:38:50] You cut adolescent greenish black bear deadly hard in the chest and damage it.
+    [01:22:13] Venerable raging black wolf moves in to attack you.
+    [01:22:13] You open yourself to an attack from venerable raging black wolf.
+    [01:22:13] The attack to the left underarm glances off your armour.
+    [01:22:14] Venerable raging black wolf seems a little more brave now.
+    [02:49:35] Mature fat Hallsouth 'F FM VSL P' moves in to attack you.
+    Logging started 2021-07-24
+    [16:38:44] Alarri casts Light of Fo."};
+#endregion
+    private async Task HandleValidSubmit()
     {
-        string uqfilename = "abc";
+
         Logger.LogInformation("HandleValidSubmit called");
-        NavManager.NavigateTo($"/CombatTable?combatlog={uqfilename}");
+
+        var forecasts = await Http.PostAsJsonAsync<CombatPost>("/api/CombatLog", combatPost);
+        string filename = await forecasts.Content.ReadAsStringAsync();
+        NavManager.NavigateTo($"/CombatTable/{filename}");
     }
 }
