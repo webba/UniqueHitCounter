@@ -33,6 +33,7 @@ namespace BlazorApp.Api
 
             var blobName = Guid.NewGuid().ToString();
             var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
+            fullBlockBlob.Properties.ContentType = "application/json";
             await fullBlockBlob.UploadTextAsync(JsonSerializer.Serialize(result));
 
             return new OkObjectResult(blobName);
