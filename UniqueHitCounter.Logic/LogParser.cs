@@ -52,6 +52,7 @@ namespace UniqueHitCounter.Logic
             var handlers = new List<ILogEntryHandler>() { 
                 new TryToEntryHandler(),
                 new CombatEntryHandler(),
+                new CastSpellEntryHandler(),
             };
 
             foreach (var handler in handlers)

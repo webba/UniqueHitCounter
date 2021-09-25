@@ -28,7 +28,7 @@ namespace BlazorApp.Shared.Entry
         }
     }
 
-    public class StartToCastEntryHandler : ILogEntryHandler
+    public class CastSpellEntryHandler : ILogEntryHandler
     {
         public LogEntry Handle((string cleanedLog, DateTime datetime) log, string characterName)
         {
@@ -44,16 +44,16 @@ namespace BlazorApp.Shared.Entry
                 if (log.cleanedLog.Contains(" on "))
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) starts to cast '?(.*?)'? on (.*)");
-                    caster = match.Groups[0].Value;
-                    spell = match.Groups[1].Value;
-                    target = match.Groups[2].Value;
+                    caster = match.Groups[1].Value;
+                    spell = match.Groups[2].Value;
+                    target = match.Groups[3].Value;
 
                 }
                 else
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) starts to cast '?(.*?)'?$");
-                    caster = match.Groups[0].Value;
-                    spell = match.Groups[1].Value;
+                    caster = match.Groups[1].Value;
+                    spell = match.Groups[2].Value;
 
                 }
             } else if (log.cleanedLog.Contains(" casts "))
@@ -61,24 +61,24 @@ namespace BlazorApp.Shared.Entry
                 if(log.cleanedLog.Contains("casts a "))
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) casts a '?(.*?)'? at (.*?)( but glances off the armour, dealing no damage)?$");
-                    caster = match.Groups[0].Value;
-                    spell = match.Groups[1].Value;
-                    target = match.Groups[2].Value;
-                    spellResult = match.Groups[3].Value;
+                    caster = match.Groups[1].Value;
+                    spell = match.Groups[2].Value;
+                    target = match.Groups[3].Value;
+                    spellResult = match.Groups[4].Value;
                 }
                 else if (log.cleanedLog.Contains(" on "))
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) casts '?(.*?)'? on (.*)");
-                    caster = match.Groups[0].Value;
-                    spell = match.Groups[1].Value;
-                    target = match.Groups[2].Value;
+                    caster = match.Groups[1].Value;
+                    spell = match.Groups[2].Value;
+                    target = match.Groups[3].Value;
 
                 }
                 else
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) casts '?(.*?)'?$");
-                    caster = match.Groups[0].Value;
-                    spell = match.Groups[1].Value;
+                    caster = match.Groups[1].Value;
+                    spell = match.Groups[2].Value;
 
                 }
             }
