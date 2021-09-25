@@ -3,6 +3,8 @@
 @using Microsoft.Extensions.Logging
 @inject ILogger<Index> Logger
 @inject NavigationManager NavManager
+@inject HttpClient Http
+
 
 
 <EditForm Model="@combatPost" OnValidSubmit="@HandleValidSubmit" class="form-group">
@@ -10,27 +12,31 @@
     <ValidationSummary />
     <div class="form-group">
         <label>
-        Name:
+            Name:
         </label>
-        <InputText id="name" @bind-Value="combatPost.Name" class="form-control"/>
-   </div>
+        <InputText id="name" @bind-Value="combatPost.Name" class="form-control" />
+    </div>
     <div>
         <label>
             Combat paste:
         </label>
-        <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" class="form-control"/>
+        <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" class="form-control" />
     </div>
     <br />
     <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
 @code {
-    private CombatPost combatPost = new();
+    //[20:02:39] Karlfranz pierces The aged starving kyklops deadly hard in the chest and slaps it.
+    private CombatPost combatPost = new CombatPost{CombatString = "[20:02:39] Karlfranz pierces The aged starving kyklops deadly hard in the chest and slaps it."};
 
-    private void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
-        string uqfilename = "abc";
+
         Logger.LogInformation("HandleValidSubmit called");
-        NavManager.NavigateTo($"/CombatTable?combatlog={uqfilename}");
+
+        var forecasts = await Http.PostAsJsonAsync<CombatPost>("/api/CombatLog", combatPost);
+        string filename = await forecasts.Content.ReadAsStringAsync();
+        NavManager.NavigateTo($"/CombatTable/{filename}");
     }
 }
