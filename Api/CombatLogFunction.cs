@@ -29,8 +29,8 @@ namespace BlazorApp.Api
             {
                 PropertyNameCaseInsensitive = true
             });
-
-            IEnumerable<CombatEntry> result = LogParser.ParseCombatLog(combatPost);
+            LogParser logParser = new LogParser(combatPost);
+            IEnumerable<CombatEntry> result = logParser.ParseCombatLog();
 
             var blobName = Guid.NewGuid().ToString();
             CombatResults combatResults = new CombatResults { 
