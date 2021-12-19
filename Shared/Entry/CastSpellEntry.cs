@@ -44,42 +44,128 @@ namespace BlazorApp.Shared.Entry
                 if (log.cleanedLog.Contains(" on "))
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) starts to cast '?(.*?)'? on (.*)");
-                    caster = match.Groups[1].Value;
-                    spell = match.Groups[2].Value;
-                    target = match.Groups[3].Value;
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                        target = match.Groups[3].Value;
+                    }
 
                 }
                 else
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) starts to cast '?(.*?)'?$");
-                    caster = match.Groups[1].Value;
-                    spell = match.Groups[2].Value;
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                    }
 
                 }
-            } else if (log.cleanedLog.Contains(" casts "))
+            }
+            else if (log.cleanedLog.Contains("start to cast"))
+            {
+                isStart = true;
+                if (log.cleanedLog.Contains(" on "))
+                {
+                    Match match = Regex.Match(log.cleanedLog, @"(.*) start to cast '?(.*?)'? on (.*)");
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                        target = match.Groups[3].Value;
+                    }
+
+                }
+                else
+                {
+                    Match match = Regex.Match(log.cleanedLog, @"(.*) start to cast '?(.*?)'?$");
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                    }
+
+                }
+            }
+            else if (log.cleanedLog.Contains(" casts "))
             {
                 if(log.cleanedLog.Contains("casts a "))
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) casts a '?(.*?)'? at (.*?)( but glances off the armour, dealing no damage)?$");
-                    caster = match.Groups[1].Value;
-                    spell = match.Groups[2].Value;
-                    target = match.Groups[3].Value;
-                    spellResult = match.Groups[4].Value;
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                        target = match.Groups[3].Value;
+                        spellResult = match.Groups[4].Value;
+                    }
                 }
                 else if (log.cleanedLog.Contains(" on "))
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) casts '?(.*?)'? on (.*)");
-                    caster = match.Groups[1].Value;
-                    spell = match.Groups[2].Value;
-                    target = match.Groups[3].Value;
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                        target = match.Groups[3].Value;
+                    }
 
                 }
                 else
                 {
                     Match match = Regex.Match(log.cleanedLog, @"(.*) casts '?(.*?)'?$");
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                    }
+
+                }
+            }
+            else if (log.cleanedLog.Contains(" cast "))
+            {
+                if (log.cleanedLog.Contains("cast a "))
+                {
+                    Match match = Regex.Match(log.cleanedLog, @"(.*) cast a '?(.*?)'? at (.*?)( but glances off the armour, dealing no damage)?$");
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                        target = match.Groups[3].Value;
+                        spellResult = match.Groups[4].Value;
+                    }
+                }
+                else if (log.cleanedLog.Contains(" on "))
+                {
+                    Match match = Regex.Match(log.cleanedLog, @"(.*) cast '?(.*?)'? on (.*)");
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                        target = match.Groups[3].Value;
+                    }
+
+                }
+                else
+                {
+                    Match match = Regex.Match(log.cleanedLog, @"(.*) cast '?(.*?)'?$");
+                    if (match.Success)
+                    {
+                        caster = match.Groups[1].Value;
+                        spell = match.Groups[2].Value;
+                    }
+
+                }
+            }
+            else if (log.cleanedLog.Contains(" fails to channel "))
+            {
+                Match match = Regex.Match(log.cleanedLog, @"(.*) fails to channel the '?(.*?)'?$");
+                if (match.Success)
+                {
                     caster = match.Groups[1].Value;
                     spell = match.Groups[2].Value;
-
+                    spellResult = "fails to channel";
                 }
             }
 

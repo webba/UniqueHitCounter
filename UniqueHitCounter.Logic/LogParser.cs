@@ -50,9 +50,21 @@ namespace UniqueHitCounter.Logic
         {
             var log = CleanDateAndTimeFromLogLine(v, lineNumber);
             var handlers = new List<ILogEntryHandler>() { 
+                new TargetsEntryHandler(),
                 new TryToEntryHandler(),
                 new CombatEntryHandler(),
                 new CastSpellEntryHandler(),
+                new GlanceEntryHandler(),
+                new FrenzyEntryHandler(),
+                new ParryEntryHandler(),
+                new StunEntryHandler(),
+                new GenericInfoEntryHandler(),
+                new MissEntryHandler(),
+                new FocusEntryHandler(),
+                new ShelterEntryHandler(),
+                new UniqueActionEntryHandler(),
+                new TauntEntryHandler(),
+                new ArmorEffectEntryHandler(),
             };
 
             foreach (var handler in handlers)

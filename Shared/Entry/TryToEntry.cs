@@ -19,7 +19,16 @@ namespace BlazorApp.Shared.Entry
     {
         public LogEntry Handle((string cleanedLog, DateTime datetime) log, string characterName)
         {
-            return log.cleanedLog.StartsWith("You try to") || log.cleanedLog.Contains("tries to") ? new TryToEntry(log) : null;
+            string attacker = null;
+
+            string victim = null;
+
+            if (log.cleanedLog.Contains("tries to") || log.cleanedLog.StartsWith("You try to") || log.cleanedLog.Contains("moves in to attack"))
+            {
+                return new TryToEntry(log);
+            }
+
+            return null;
         }
     }
 }

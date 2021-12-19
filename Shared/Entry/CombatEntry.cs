@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace BlazorApp.Shared.Entry
 {
@@ -29,13 +30,41 @@ namespace BlazorApp.Shared.Entry
     {
         public LogEntry Handle((string cleanedLog, DateTime datetime) log, string characterName)
         {
-            return null;
-            return new CombatEntry
+            Match match = Regex.Match(log.cleanedLog, CombatStrings.OtherPattern);
+
+            if (match.Success)
             {
-                Log = log.cleanedLog,
-                LogTime = log.datetime,
-                HitType = "mauls"
-            };
+                return new CombatEntry
+                {
+                    Log = log.cleanedLog,
+                    LogTime = log.datetime,
+                    Attacker = match.Groups[1].Value,
+                    HitType = match.Groups[2].Value,
+                    Victim = match.Groups[3].Value.ToLower() == "you" ? characterName : match.Groups[3].Value,
+                    HitStrength = match.Groups[4].Value,
+                    HitLocation = match.Groups[5].Value,
+                    HitResult = match.Groups[6].Value
+                };
+            }
+
+            match = Regex.Match(log.cleanedLog, CombatStrings.ActorPattern);
+
+            if (match.Success)
+            {
+                return new CombatEntry
+                {
+                    Log = log.cleanedLog,
+                    LogTime = log.datetime,
+                    Attacker = characterName,
+                    HitType = match.Groups[2].Value,
+                    Victim = match.Groups[3].Value,
+                    HitStrength = match.Groups[4].Value,
+                    HitLocation = match.Groups[5].Value,
+                    HitResult = match.Groups[6].Value
+                };
+            }
+
+            return null;
         }
     }
 }
