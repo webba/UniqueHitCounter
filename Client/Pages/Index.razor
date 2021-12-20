@@ -25,7 +25,15 @@
     <button class="btn btn-primary" type="submit">Submit</button>
 </EditForm>
 
+<div class="@LoaderClass">
+    <h3>Processing...</h3>
+    <div class="loader"></div>
+</div>
+
 @code {
+    private bool hideLoader = false;
+
+    private string LoaderClass => hideLoader ? "loader-container loader-container-hidden" : "loader-container";
 
     private CombatPost combatPost = new CombatPost{Name = "", CombatString = @""};
 
@@ -33,9 +41,12 @@
     {
 
         Logger.LogInformation("HandleValidSubmit called");
+        hideLoader = false;
 
         var forecasts = await Http.PostAsJsonAsync<CombatPost>("/api/CombatLog", combatPost);
         string filename = await forecasts.Content.ReadAsStringAsync();
+
+        hideLoader = true;
         NavManager.NavigateTo($"/CombatCreatureTable/{filename}");
     }
 }
