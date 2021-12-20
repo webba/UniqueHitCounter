@@ -97,5 +97,21 @@ namespace BlazorApp.Api
 
             return new OkObjectResult(combatEntry);
         }
+
+        [FunctionName("OldDataGetFunction")]
+        public static async Task<IActionResult> OldDataGetFunction(
+          [HttpTrigger(AuthorizationLevel.Function, "get", Route = "OldData/{blobName}")] HttpRequest req,
+          [Blob("%OldDataName%", FileAccess.Read, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
+          ILogger log, string blobName)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
+            string v = await fullBlockBlob.DownloadTextAsync();
+
+            IEnumerable<OldDataEntry> data = JsonConvert.DeserializeObject<IEnumerable<OldDataEntry>>(v);
+
+            return new OkObjectResult(data);
+        }
     }
 }

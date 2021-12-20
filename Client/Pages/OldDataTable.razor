@@ -1,0 +1,58 @@
+﻿@page "/OldDataTable/{key}/"
+@using BlazorApp.Shared
+@inject HttpClient httpClient
+
+<dl>
+    <dt>Old Data:</dt>
+    <dd>This is old data and may not be as reliable.</dd>
+</dl>
+@if (result == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Hits</th>
+                <th>Times Hit</th>
+                <th>Times Stunned</th>
+                <th>Times Thrown</th>
+                <th>Knocks Over</th>
+                <th>Biggest Hit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OldDataEntry entry in result)
+            {
+                <tr>
+                    <td>@entry.Name</td>
+                    <td>@entry.Hits</td>
+                    <td>@entry.Hits_Taken</td>
+                    <td>@entry.Stuns</td>
+                    <td>@entry.Throws</td>
+                    <td>@entry.Knocks</td>
+                    <td>@entry.Log</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public string key { get; set; }
+
+    private IEnumerable<OldDataEntry> result;
+
+    protected override async Task OnInitializedAsync()
+    {
+        result = await httpClient.GetFromJsonAsync<IEnumerable<OldDataEntry>>($"/api/OldData/{key}");
+        if (result != null)
+        {
+            result = result.OrderByDescending(r => r.Hits);
+        }
+    }
+}
