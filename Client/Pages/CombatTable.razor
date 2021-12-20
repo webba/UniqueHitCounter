@@ -1,0 +1,76 @@
+﻿@page "/CombatResultTable/{page}/{key}/"
+@using BlazorApp.Shared
+@inject HttpClient httpClient
+
+<h1>Combat</h1>
+@if (result == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    if(tableData != null)
+    {        
+        <dl>
+            <dt>Creature:</dt>
+            <dd>@key</dd>
+            <dt>Started at:</dt>
+            <dd>@result.FightStart.ToString("F")</dd>
+            <dt>Ended at:</dt>
+            <dd>@result.FightEnd.ToString("F")</dd>
+        </dl>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Player</th>
+				    <th>Hits</th>
+				    <th>Times Hit</th>
+				    <th>Times Stunned</th>
+				    <th>Times Thrown</th>
+				    <th>Knocks Over</th>
+				    <th>Biggest Hit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (CombatResult combatEntry in tableData)
+                {
+                    <tr>
+                        <td>@combatEntry.Player</td>
+                        <td>@combatEntry.Hits</td>
+                        <td>@combatEntry.TimesHit</td>
+                        <td>@combatEntry.TimesStunned</td>
+                        <td>@combatEntry.TimesThrown</td>
+                        <td>@combatEntry.KnocksOver</td>
+                        <td>@combatEntry.BiggestHit</td>
+                    </tr>
+                }
+        </tbody>
+        </table>
+    }
+    else
+    {
+        <p><em>Invalid Creature</em></p>
+    }
+}
+
+@code {
+    [Parameter]
+    public string page { get; set; }
+    [Parameter]
+    public string key { get; set; }
+
+    private CombatResults result;
+    private IEnumerable<CombatResult> tableData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        result = await httpClient.GetFromJsonAsync<CombatResults>($"/api/CombatResults/{page}");
+        Console.WriteLine(key);
+        Console.WriteLine(result.CombatResultsDict.Keys.Contains(key));
+        if(result.CombatResultsDict.Keys.Contains(key))
+        {
+            tableData = result.CombatResultsDict[key].OrderByDescending(r => r.Hits);
+        }
+	}
+}

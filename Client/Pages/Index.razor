@@ -1,7 +1,1449 @@
 ﻿@page "/"
+@using BlazorApp.Shared
+@using Microsoft.Extensions.Logging
+@inject ILogger<Index> Logger
+@inject NavigationManager NavManager
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<EditForm Model="@combatPost" OnValidSubmit="@HandleValidSubmit" class="form-group">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label>
+            Name:
+        </label>
+        <InputText id="name" @bind-Value="combatPost.Name" class="form-control" />
+    </div>
+    <div>
+        <label>
+            Combat paste:
+        </label>
+        <InputTextArea id="combatstring" @bind-Value="combatPost.CombatString" class="form-control" />
+    </div>
+    <br />
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+
+@code {
+
+#region stuff
+    //[20:02:39] Karlfranz pierces The aged starving kyklops deadly hard in the chest and slaps it.
+        private CombatPost combatPost = new CombatPost{Name = "stuff", CombatString = @"Logging started 2020-11-07
+    [00:33:41] You open yourself to an attack from The aged starving black dragon.
+    [00:33:41] The attack to the left hand glances off your armour.
+    [00:33:50] The aged starving black dragon hits Torkell deadly hard in the left thigh and harms it.
+    [00:33:56] Vorlox starts to cast Weakness on The aged starving black dragon.
+    [00:33:56] Dargol cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:33:59] The aged starving black dragon breathes fire!
+    [00:34:02] Synjor regains his bearings.
+    [00:34:02] Jort regains his bearings.
+    [00:34:05] You try to cut The aged starving black dragon.
+    [00:34:05] Kaynsable regains his bearings.
+    [00:34:07] Tearex regains his bearings.
+    [00:34:07] Aspirineilia cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:34:08] Bleu cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:34:09] Minami regains her bearings.
+    [00:34:09] Dokhida cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:34:10] Sorceress regains her bearings.
+    [00:34:11] You miss with the huge axe.
+    [00:34:11] You make a bad move, making you an easy target.
+    [00:34:11] Phoenixasterion regains her bearings.
+    [00:34:13] The aged starving black dragon hits Torkell deadly hard in the right thigh and damages it.
+    [00:34:13] Kanick regains his bearings.
+    [00:34:14] Sorceress starts to cast Weakness on The aged starving black dragon.
+    [00:34:15] Aldurair cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:34:15] Vorlox casts Weakness on The aged starving black dragon.
+    [00:34:15] Sunduc regains her bearings.
+    [00:34:15] You need to get into the fight more first.
+    [00:34:16] You miss with the huge axe.
+    [00:34:17] Antongalaktiki cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:34:17] Jort regains his bearings.
+    [00:34:18] Aspirineilia cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:34:18] Synjor mauls The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:34:20] Aldurair cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:34:21] Merri regains his bearings.
+    [00:34:22] Sirreal regains his bearings.
+    [00:34:22] You miss with the huge axe.
+    [00:34:22] Jort regains his bearings.
+    [00:34:23] Minami cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:34:24] Aldenela cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:34:25] You need to get into the fight more first.
+    [00:34:25] Alyse regains her bearings.
+    [00:34:25] Prabhupada regains his bearings.
+    [00:34:26] Ngin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:34:26] Grizwaldo regains his bearings.
+    [00:34:26] You need to get into the fight more first.
+    [00:34:26] The aged starving black dragon hits Torkell deadly hard in the right underarm and harms it.
+    [00:34:26] Auroraborealis cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:34:27] Jort regains his bearings.
+    [00:34:27] You need to get into the fight more first.
+    [00:34:28] You miss with the huge axe.
+    [00:34:28] Jimson cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:34:28] You need to get into the fight more first.
+    [00:34:29] Garraildi regains his bearings.
+    [00:34:29] Minami cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:34:30] You need to get into the fight more first.
+    [00:34:31] You need to get into the fight more first.
+    [00:34:32] The aged starving black dragon hits Torkell deadly hard in the right underarm and harms it.
+    [00:34:32] You need to get into the fight more first.
+    [00:34:33] Sorceress casts Weakness on The aged starving black dragon.
+    [00:34:33] You need to get into the fight more first.
+    [00:34:33] Your attack glances off The aged starving black dragon's armour.
+    [00:34:33] Galexion regains his bearings.
+    [00:34:34] You need to get into the fight more first.
+    [00:34:35] Pingster regains his bearings.
+    [00:34:35] You need to get into the fight more first.
+    [00:34:36] The aged starving black dragon hits Torkell deadly hard in the left underarm and damages it.
+    [00:34:36] You need to get into the fight more first.
+    [00:34:37] You need to get into the fight more first.
+    [00:34:37] Indigoe regains her bearings.
+    [00:34:37] Kania regains her bearings.
+    [00:34:37] Lomrandir regains his bearings.
+    [00:34:38] You need to get into the fight more first.
+    [00:34:38] Dargol regains his bearings.
+    [00:34:38] Drjacobhayes regains his bearings.
+    [00:34:39] You cut The aged starving black dragon deadly hard in the chest and slap it.
+    [00:34:39] Kanick regains his bearings.
+    [00:34:40] You need to get into the fight more first.
+    [00:34:41] Roselina regains her bearings.
+    [00:34:41] Mirowen regains her bearings.
+    [00:34:41] Minami cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:34:42] The aged starving black dragon tailwhips Envoh deadly hard in the right thigh and damages it.
+    [00:34:42] You need to get into the fight more first.
+    [00:34:42] Vorlox regains his bearings.
+    [00:34:43] Bleu cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:34:44] You need to get into the fight more first.
+    [00:34:44] Drjacobhayes regains his bearings.
+    [00:34:44] You miss with the huge axe.
+    [00:34:45] You need to get into the fight more first.
+    [00:34:45] Audrie regains her bearings.
+    [00:34:46] Terri regains her bearings.
+    [00:34:46] You need to get into the fight more first.
+    [00:34:46] Zuelatek cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:34:47] Phoenixasterion regains her bearings.
+    [00:34:48] You need to get into the fight more first.
+    [00:34:48] Kelban regains his bearings.
+    [00:34:49] Jaytoo mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:34:49] You need to get into the fight more first.
+    [00:34:50] You miss with the huge axe.
+    [00:34:50] Sirreal regains his bearings.
+    [00:34:51] You need to get into the fight more first.
+    [00:34:52] The aged starving black dragon hits adolescent hardened brown bear deadly hard in the right paw and damages it.
+    [00:34:52] Aldenela cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:34:52] Saturnfive cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:34:52] Tiggs regains her bearings.
+    [00:34:53] You need to get into the fight more first.
+    [00:34:53] Nahimana pushes The aged starving black dragon over with her shield.
+    [00:34:54] Calypsso starts to cast Ice Pillar.
+    [00:34:54] You need to get into the fight more first.
+    [00:34:55] Syrdon regains her bearings.
+    [00:34:55] Lurik cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:34:55] You need to get into the fight more first.
+    [00:34:56] You cut The aged starving black dragon deadly hard in the chest and slap it.
+    [00:34:56] The aged starving black dragon regains his bearings.
+    [00:34:56] The aged starving black dragon hits adolescent hardened brown bear deadly hard in the left thigh and damages it.
+    [00:34:57] Shaihulud regains his bearings.
+    [00:34:57] Snoy regains his bearings.
+    [00:34:58] You need to get into the fight more first.
+    [00:34:58] Tiggs cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:35:00] Ssmokes cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:35:00] You need to get into the fight more first.
+    [00:35:00] Sirreal regains his bearings.
+    [00:35:01] Kalrach regains his bearings.
+    [00:35:01] Synjor mauls The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:35:01] Lomrandir regains his bearings.
+    [00:35:01] You miss with the huge axe.
+    [00:35:02] You need to get into the fight more first.
+    [00:35:02] Rayen regains his bearings.
+    [00:35:03] Calypsso casts Ice Pillar.
+    [00:35:03] You need to get into the fight more first.
+    [00:35:03] Vessel cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:35:03] Hod regains his bearings.
+    [00:35:04] Equil regains his bearings.
+    [00:35:04] Syrdon starts to cast Ice Pillar.
+    [00:35:04] Phoenixasterion regains her bearings.
+    [00:35:04] You need to get into the fight more first.
+    [00:35:05] Mankurt pushes The aged starving black dragon over with his shield.
+    [00:35:06] The aged starving black dragon regains his bearings.
+    [00:35:06] You need to get into the fight more first.
+    [00:35:07] Envoh starts to cast Light of Fo.
+    [00:35:07] You need to get into the fight more first.
+    [00:35:07] You miss with the huge axe.
+    [00:35:07] Talear regains her bearings.
+    [00:35:07] Okiee regains his bearings.
+    [00:35:08] The aged starving black dragon hits adolescent hardened brown bear extremely hard in the stomach and damages it.
+    [00:35:08] Galexion regains his bearings.
+    [00:35:08] Lochnessm regains her bearings.
+    [00:35:09] You need to get into the fight more first.
+    [00:35:10] You need to get into the fight more first.
+    [00:35:11] You need to get into the fight more first.
+    [00:35:12] Dylanmciam regains his bearings.
+    [00:35:12] You need to get into the fight more first.
+    [00:35:12] Aspirineilia cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:35:12] Vorlox cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:35:13] You miss with the huge axe.
+    [00:35:13] Prabhupada regains his bearings.
+    [00:35:13] Syrdon casts Ice Pillar.
+    [00:35:13] You need to get into the fight more first.
+    [00:35:14] The aged starving black dragon hits adolescent hardened brown bear deadly hard in the stomach and damages it.
+    [00:35:14] You need to get into the fight more first.
+    [00:35:15] You need to get into the fight more first.
+    [00:35:15] Minotaurus regains his bearings.
+    [00:35:16] You need to get into the fight more first.
+    [00:35:17] Baeowuf regains his bearings.
+    [00:35:17] You need to get into the fight more first.
+    [00:35:18] Amazingmarkz regains his bearings.
+    [00:35:18] Garraildi regains his bearings.
+    [00:35:18] Saltybadger regains his bearings.
+    [00:35:18] Hod regains his bearings.
+    [00:35:18] Your attack glances off The aged starving black dragon's armour.
+    [00:35:19] You need to get into the fight more first.
+    [00:35:20] Miya regains her bearings.
+    [00:35:20] You need to get into the fight more first.
+    [00:35:21] Envoh casts Light of Fo.
+    [00:35:21] You need to get into the fight more first.
+    [00:35:21] Snoy regains his bearings.
+    [00:35:21] Amazingmarkz regains his bearings.
+    [00:35:21] Shmoe regains his bearings.
+    [00:35:23] The aged starving black dragon hits Sunduc deadly hard in the left thigh and damages it.
+    [00:35:23] Roselina starts to cast Weakness on The aged starving black dragon.
+    [00:35:24] You miss with the huge axe.
+    [00:35:26] Tiblet regains his bearings.
+    [00:35:28] Azai regains his bearings.
+    [00:35:28] You try to focus.
+    [00:35:29] Kezeru regains his bearings.
+    [00:35:30] Fusspawnagain regains his bearings.
+    [00:35:30] Equinn regains his bearings.
+    [00:35:30] Prabhupada regains his bearings.
+    [00:35:30] Minami cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:35:31] Jaytoo mauls The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:35:31] Jimson cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:35:32] Slavapiterskiy cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:35:33] Aspirineilia cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:35:33] Barazh regains her bearings.
+    [00:35:33] Shmoe regains his bearings.
+    [00:35:33] You balance your feet and your soul.
+    [00:35:33] You miss with the huge axe.
+    [00:35:34] Talios cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:35:34] Megantoo regains her bearings.
+    [00:35:35] Your attack glances off The aged starving black dragon's armour.
+    [00:35:36] The aged starving black dragon makes a circular powerful sweep!
+    [00:35:36] The aged starving black dragon hits Drecius deadly hard in the right hand and damages it.
+    [00:35:36] The aged starving black dragon hits Jackofshadows deadly hard in the right calf and damages it.
+    [00:35:36] The aged starving black dragon hits Queenoftheunderworld deadly hard in the right thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Gingeko deadly hard in the right shoulder and damages it.
+    [00:35:36] The aged starving black dragon hits Kaynsable deadly hard in the left shoulder and harms it.
+    [00:35:36] The aged starving black dragon hits Scorw deadly hard in the head and damages it.
+    [00:35:36] The aged starving black dragon hits Equinn deadly hard in the top of the back and damages it.
+    [00:35:36] The aged starving black dragon hits Syrdon deadly hard in the head and damages it.
+    [00:35:36] The aged starving black dragon hits Amazingmarkz deadly hard in the left calf and damages it.
+    [00:35:36] The aged starving black dragon hits Galexion deadly hard in the lower back and damages it.
+    [00:35:36] The aged starving black dragon hits Tearex deadly hard in the left thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Baeowuf deadly hard in the left upper arm and harms it.
+    [00:35:36] The aged starving black dragon hits Mankurt deadly hard in the left thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Roselina deadly hard in the right upper arm and damages it.
+    [00:35:36] The aged starving black dragon hits Fusspawnagain deadly hard in the lower back and damages it.
+    [00:35:36] The aged starving black dragon hits Minotaurus deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits Kezeru deadly hard in the top of the back and damages it.
+    [00:35:36] The aged starving black dragon hits Kania deadly hard in the left underarm and damages it.
+    [00:35:36] The aged starving black dragon hits Thassadhar deadly hard in the left calf and damages it.
+    [00:35:36] The aged starving black dragon hits Saturnfive deadly hard in the left thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Dainya deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits Lochnessmonsterr deadly hard in the right hand and damages it.
+    [00:35:36] The aged starving black dragon hits Lurik deadly hard in the right calf and damages it.
+    [00:35:36] The aged starving black dragon hits Mycoal deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits Tampa deadly hard in the left upper arm and harms it.
+    [00:35:36] The aged starving black dragon hits Dzhodzhok deadly hard in the stomach and damages it.
+    [00:35:36] The aged starving black dragon hits Draigo deadly hard in the left calf and damages it.
+    [00:35:36] The aged starving black dragon hits Kanick deadly hard in the right underarm and damages it.
+    [00:35:36] The aged starving black dragon hits Shmoe deadly hard in the right foot and damages it.
+    [00:35:36] The aged starving black dragon hits Dalden deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits aged hardened worg deadly hard in the right paw and harms it.
+    [00:35:36] The aged starving black dragon hits Indigoe deadly hard in the right foot and damages it.
+    [00:35:36] The aged starving black dragon hits Dayday deadly hard in the right underarm and harms it.
+    [00:35:36] The aged starving black dragon hits Godric deadly hard in the left thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Tiblet deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits Gunvar deadly hard in the right thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Screamnrobot deadly hard in the right thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Camarobabe deadly hard in the head and damages it.
+    [00:35:36] The aged starving black dragon hits Alantheman deadly hard in the left calf and damages it.
+    [00:35:36] The aged starving black dragon hits Aereya deadly hard in the right underarm and damages it.
+    [00:35:36] The aged starving black dragon hits Equil deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits Jeloria deadly hard in the right hand and damages it.
+    [00:35:36] The aged starving black dragon hits Rayen deadly hard in the lower back and damages it.
+    [00:35:36] The aged starving black dragon hits Antongalaktiki deadly hard in the left foot and damages it.
+    [00:35:36] The aged starving black dragon hits Sunduc deadly hard in the right underarm and damages it.
+    [00:35:36] The aged starving black dragon hits Phoenixasterion deadly hard in the left shoulder and damages it.
+    [00:35:36] The aged starving black dragon hits Bellanora deadly hard in the left calf and damages it.
+    [00:35:36] The aged starving black dragon hits Lirielle deadly hard in the lower back and damages it.
+    [00:35:36] The aged starving black dragon hits Rynmira deadly hard in the top of the back and damages it.
+    [00:35:36] The aged starving black dragon hits Prabhupada deadly hard in the stomach and damages it.
+    [00:35:36] The aged starving black dragon hits Itsamysteryll deadly hard in the left thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Blueeyeddevil deadly hard in the left thigh and damages it.
+    [00:35:36] The aged starving black dragon hits Megantoo deadly hard in the right foot and damages it.
+    [00:35:36] The aged starving black dragon hits Munchkin deadly hard in the head and damages it.
+    [00:35:36] The aged starving black dragon hits Eandre deadly hard in the right underarm and damages it.
+    [00:35:36] The aged starving black dragon hits Hiccup deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits Sellybrait deadly hard in the left underarm and damages it.
+    [00:35:36] The aged starving black dragon hits Paratus deadly hard in the lower back and damages it.
+    [00:35:36] The aged starving black dragon hits Slavapiterskiy deadly hard in the right shoulder and harms it.
+    [00:35:36] The aged starving black dragon hits Starmoon deadly hard in the right upper arm and damages it.
+    [00:35:36] The aged starving black dragon hits Okiee deadly hard in the right upper arm and damages it.
+    [00:35:36] The aged starving black dragon hits Ssmokes deadly hard in the right calf and harms it.
+    [00:35:36] The aged starving black dragon hits Jimson deadly hard in the stomach and harms it.
+    [00:35:36] The aged starving black dragon hits Jort deadly hard in the right underarm and damages it.
+    [00:35:36] The aged starving black dragon hits Miya deadly hard in the right foot and harms it.
+    [00:35:36] The aged starving black dragon hits Victalraham deadly hard in the right hand and damages it.
+    [00:35:36] The aged starving black dragon hits Nahimana deadly hard in the right shoulder and damages it.
+    [00:35:36] The aged starving black dragon hits Audrie deadly hard in the left upper arm and damages it.
+    [00:35:36] The aged starving black dragon hits Sirreal deadly hard in the stomach and damages it.
+    [00:35:36] The aged starving black dragon hits Lomrandir deadly hard in the neck and damages it.
+    [00:35:36] The aged starving black dragon hits Anglomango deadly hard in the lower back and damages it.
+    [00:35:36] The aged starving black dragon hits Bradcubb deadly hard in the left shoulder and damages it.
+    [00:35:36] The aged starving black dragon hits Xeelei deadly hard in the left calf and damages it.
+    [00:35:36] The aged starving black dragon hits Tibba deadly hard in the chest and damages it.
+    [00:35:36] The aged starving black dragon hits Kyrelia deadly hard in the lower back and damages it.
+    [00:35:36] The aged starving black dragon hits Cadillacjack deadly hard in the stomach and damages it.
+    [00:35:36] The aged starving black dragon hits Hollydaye deadly hard in the left calf and damages it.
+    [00:35:37] Saturnfive cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:35:37] Synjor mauls The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:35:37] You try to focus.
+    [00:35:39] Blueeyeddevil regains his bearings.
+    [00:35:40] Starmoon regains her bearings.
+    [00:35:40] Synjor mauls The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:35:41] The aged starving black dragon hits Sunduc deadly hard in the stomach and harms it.
+    [00:35:41] You are now focused on the enemy and its every move.
+    [00:35:41] You miss with the huge axe.
+    [00:35:42] Munchkin regains his bearings.
+    [00:35:43] Minotaurus regains his bearings.
+    [00:35:43] You try to focus.
+    [00:35:45] Indigoe regains her bearings.
+    [00:35:46] Vorlox cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:35:46] The aged starving black dragon hits Sunduc deadly hard in the chest and damages it.
+    [00:35:47] You feel lightning inside, quickening your reflexes.
+    [00:35:47] You miss with the huge axe.
+    [00:35:48] Minami cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:35:49] Rynmira regains her bearings.
+    [00:35:49] You try to focus.
+    [00:35:50] Cadillacjack regains his bearings.
+    [00:35:51] Aspirineilia cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:35:51] Ssmokes regains her bearings.
+    [00:35:53] Jaytoo mauls The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:35:53] Your consciousness is lifted to a higher level, making you very attentive.
+    [00:35:53] You miss with the huge axe.
+    [00:35:54] You try to focus.
+    [00:35:54] Hiccup regains his bearings.
+    [00:35:55] Ragecg regains his bearings.
+    [00:35:55] Kyrelia regains her bearings.
+    [00:35:56] Sunduc regains her bearings.
+    [00:35:56] Syrdon regains her bearings.
+    [00:35:57] Rynmira starts to cast 'Cure Serious' on herself.
+    [00:35:57] Shaihulud regains his bearings.
+    [00:35:58] Kaynsable regains his bearings.
+    [00:35:59] You fail to reach a higher degree of focus.
+    [00:35:59] Foira starts to cast Light of Fo.
+    [00:35:59] You miss with the huge axe.
+    [00:35:59] Saturnfive cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:35:59] Meiko regains her bearings.
+    [00:36:01] Minami cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:36:01] You try to focus.
+    [00:36:01] Shmoe regains his bearings.
+    [00:36:02] The aged starving black dragon hits Sunduc deadly hard in the chest and damages it.
+    [00:36:02] Saltybadger regains his bearings.
+    [00:36:02] Mirowen regains her bearings.
+    [00:36:02] Noobforhire regains his bearings.
+    [00:36:04] Journaya regains her bearings.
+    [00:36:04] Sorceress seems to shelter her higher parts.
+    [00:36:05] You fail to reach a higher degree of focus.
+    [00:36:05] Your attack glances off The aged starving black dragon's armour.
+    [00:36:07] Minami cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:36:07] You try to focus.
+    [00:36:08] Sorceress cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:08] Kyrelia pushes The aged starving black dragon over with her shield.
+    [00:36:08] Dokhida cuts The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:36:08] Shaihulud regains his bearings.
+    [00:36:08] Perseii regains her bearings.
+    [00:36:09] Minami seems to shelter her higher parts.
+    [00:36:09] Ssmokes cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:09] Aspirineilia cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:36:10] Aldurair cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:10] Journaya regains her bearings.
+    [00:36:11] Zuelatek cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:11] The aged starving black dragon regains his bearings.
+    [00:36:11] You fail to reach a higher degree of focus.
+    [00:36:11] Phoenixasterion regains her bearings.
+    [00:36:11] You cut The aged starving black dragon deadly hard in the right foreclaw and slap it.
+    [00:36:11] Rynmira casts 'Cure Serious' on herself.
+    [00:36:11] Ngin cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:36:11] Kalrach regains his bearings.
+    [00:36:13] The aged starving black dragon hits Sunduc deadly hard in the stomach and damages it.
+    [00:36:13] Talios cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:13] Foira casts Light of Fo.
+    [00:36:13] The aged starving black dragon hits Nyest deadly hard in the right thigh and damages it.
+    [00:36:14] Antongalaktiki cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:36:14] Bradcubb regains his bearings.
+    [00:36:14] Hawkhawk regains his bearings.
+    [00:36:14] Dzhodzhok regains his bearings.
+    [00:36:14] Lucaen regains his bearings.
+    [00:36:15] Itsamysteryll regains her bearings.
+    [00:36:15] The aged starving black dragon barely evades the blow to the chest.
+    [00:36:15] Linuiel regains his bearings.
+    [00:36:15] You try to focus.
+    [00:36:16] Saturnfive cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:16] Nyest regains her bearings.
+    [00:36:19] You fail to reach a higher degree of focus.
+    [00:36:19] Queenoftheunderworld regains her bearings.
+    [00:36:20] Kalo regains his bearings.
+    [00:36:20] Unholypolly starts to cast Scorn of Libila.
+    [00:36:20] Your attack glances off The aged starving black dragon's armour.
+    [00:36:21] Kalrach regains his bearings.
+    [00:36:22] Sorceress starts to cast Scorn of Libila.
+    [00:36:22] You try to focus.
+    [00:36:22] Tiggs regains her bearings.
+    [00:36:24] Garraildi regains his bearings.
+    [00:36:25] Vorlox cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:26] You fail to reach a higher degree of focus.
+    [00:36:26] You miss with the huge axe.
+    [00:36:29] Drecius regains his bearings.
+    [00:36:29] You try to focus.
+    [00:36:29] Talios cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:29] Aspirineilia cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:36:29] Jackofshadows regains his bearings.
+    [00:36:30] Munchkin cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:36:30] Vorlox cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:36:31] Ssmokes cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:36:33] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:36:34] The aged starving black dragon wingbuffs Torkell deadly hard in the chest and harms it.
+    [00:36:34] You fail to reach a higher degree of focus.
+    [00:36:34] Your attack glances off The aged starving black dragon's armour.
+    [00:36:34] Unholypolly casts Scorn of Libila.
+    [00:36:35] You try to focus.
+    [00:36:36] Sorceress casts Scorn of Libila.
+    [00:36:36] Perseii regains her bearings.
+    [00:36:37] Lucaen regains his bearings.
+    [00:36:37] Hayzues regains his bearings.
+    [00:36:38] Freddyboy starts to cast Fire Pillar.
+    [00:36:39] Jort regains his bearings.
+    [00:36:39] Ngin cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:36:39] The aged starving black dragon ignores Mirowen's antics.
+    [00:36:39] You fail to reach a higher degree of focus.
+    [00:36:39] You cut The aged starving black dragon deadly hard in the right thigh and slap it.
+    [00:36:40] Gunvar regains her bearings.
+    [00:36:40] Morphaana regains her bearings.
+    [00:36:41] Rynmira regains her bearings.
+    [00:36:42] Godric cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:36:42] Linuiel regains his bearings.
+    [00:36:42] You try to focus.
+    [00:36:43] Ragecg regains his bearings.
+    [00:36:44] Torkell regains his bearings.
+    [00:36:45] The aged starving black dragon hits Torkell deadly hard in the left shoulder and harms it.
+    [00:36:45] Ngin cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:36:45] Lomrandir regains his bearings.
+    [00:36:46] You fail to reach a higher degree of focus.
+    [00:36:46] You miss with the huge axe.
+    [00:36:46] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:36:46] Minami regains her bearings.
+    [00:36:47] Ragecg regains his bearings.
+    [00:36:47] Freddyboy casts Fire Pillar.
+    [00:36:48] You try to focus.
+    [00:36:48] Xeelei regains his bearings.
+    [00:36:48] Camarobabe regains her bearings.
+    [00:36:48] Nahimana pushes The aged starving black dragon over with her shield.
+    [00:36:48] Sorceress starts to cast Weakness on The aged starving black dragon.
+    [00:36:49] Dalnacriech pierces The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:36:49] Roselina cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:50] Screamnrobot regains his bearings.
+    [00:36:50] Zuelatek cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:36:50] Jaytoo mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:36:50] Ngin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:36:50] The aged starving black dragon regains his bearings.
+    [00:36:50] The aged starving black dragon hits Torkell deadly hard in the left thigh and damages it.
+    [00:36:51] Mankurt regains his bearings.
+    [00:36:51] Dokhida cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:36:51] Stelioskontos regains his bearings.
+    [00:36:52] You fail to reach a higher degree of focus.
+    [00:36:52] The aged starving black dragon barely evades the blow to the stomach.
+    [00:36:52] The aged starving black dragon ignores Mirowen's antics.
+    [00:36:54] You try to focus.
+    [00:36:55] Morphaana regains her bearings.
+    [00:36:55] Hiccup regains his bearings.
+    [00:36:55] Dalden cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:36:56] Zuelatek cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:36:57] Shaihulud regains his bearings.
+    [00:36:58] Thassadhar pushes The aged starving black dragon over with his shield.
+    [00:36:58] You fail to reach a higher degree of focus.
+    [00:36:58] You miss with the huge axe.
+    [00:36:58] The aged starving black dragon regains his bearings.
+    [00:36:59] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:36:59] You try to focus.
+    [00:37:00] Kalrach regains his bearings.
+    [00:37:03] The aged starving black dragon hits Torkell deadly hard in the left underarm and harms it.
+    [00:37:03] You feel supernatural. Invincible!
+    [00:37:03] You cut The aged starving black dragon deadly hard in the left thigh and slap it.
+    [00:37:04] The aged starving black dragon wingbuffs Torkell deadly hard in the stomach and damages it.
+    [00:37:05] The aged starving black dragon ignores Mirowen's antics.
+    [00:37:06] Dalden cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:37:06] You miss with the huge axe.
+    [00:37:07] Zuelatek cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:37:07] Thassadhar regains his bearings.
+    [00:37:07] Sorceress casts Weakness on The aged starving black dragon.
+    [00:37:07] Sorceress cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:37:08] Torkell regains his bearings.
+    [00:37:08] Lucaen regains his bearings.
+    [00:37:08] Fusspawnagain regains his bearings.
+    [00:37:10] Vorlox cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:37:10] Jaytoo mauls The aged starving black dragon deadly hard in the left eye and slaps it.
+    [00:37:10] Gingeko regains his bearings.
+    [00:37:11] Talear regains her bearings.
+    [00:37:11] The aged starving black dragon hits Torkell deadly hard in the left underarm and harms it.
+    [00:37:11] The aged starving black dragon knocks Torkell senseless with his hit!
+    [00:37:11] Tiggs cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:37:11] You miss with the huge axe.
+    [00:37:13] Xeelei regains his bearings.
+    [00:37:13] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:37:13] Jaytoo mauls The aged starving black dragon deadly hard in the neck and slaps it.
+    [00:37:14] Amazingmarkz starts to cast Cure Light on Torkell.
+    [00:37:15] Tearex cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:37:15] The aged starving black dragon hits Vizzer deadly hard in the chest and damages it.
+    [00:37:16] Meiko regains her bearings.
+    [00:37:16] Itsamysteryll regains her bearings.
+    [00:37:17] You miss with the huge axe.
+    [00:37:19] The aged starving black dragon ignores Mirowen's antics.
+    [00:37:20] Xeelei regains his bearings.
+    [00:37:20] Saturnfive cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:37:20] Minami seems to shelter her higher parts.
+    [00:37:20] Synjor mauls The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:37:20] Mycoal regains his bearings.
+    [00:37:21] The aged starving black dragon hits venerable dog deadly hard in the calf of the right foreleg and damages it.
+    [00:37:21] Munchkin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:37:23] The aged starving black dragon skillfully evades the blow to the left underarm.
+    [00:37:23] Amazingmarkz casts Cure Light on Torkell.
+    [00:37:24] Ngin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:37:24] Godric regains his bearings.
+    [00:37:25] Slavapiterskiy regains his bearings.
+    [00:37:25] Rynmira regains her bearings.
+    [00:37:26] Amazingmarkz starts to cast Cure Light on Torkell.
+    [00:37:27] Vessel regains her bearings.
+    [00:37:27] The aged starving black dragon hits venerable dog deadly hard in the calf of the right foreleg and damages it.
+    [00:37:28] Synjor mauls The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:37:28] You miss with the huge axe.
+    [00:37:29] Baeowuf regains his bearings.
+    [00:37:30] Jimson regains her bearings.
+    [00:37:30] Sorceress cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:37:30] Tiberium starts to cast Ice Pillar.
+    [00:37:32] Megantoo regains her bearings.
+    [00:37:32] Godric cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:37:32] Paratus regains his bearings.
+    [00:37:33] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:37:34] You miss with the huge axe.
+    [00:37:34] Thassadhar pushes The aged starving black dragon over with his shield.
+    [00:37:35] Zuelatek cuts The aged starving black dragon deadly hard in the head and slaps it.
+    [00:37:36] Calypsso regains her bearings.
+    [00:37:36] The aged starving black dragon regains his bearings.
+    [00:37:37] Dylanmciam regains his bearings.
+    [00:37:38] The aged starving black dragon hits Equil deadly hard in the left thigh and damages it.
+    [00:37:38] Meiko regains her bearings.
+    [00:37:38] Minami cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:37:39] The aged starving black dragon ignores Mirowen's antics.
+    [00:37:39] Tiberium casts Ice Pillar.
+    [00:37:40] You cut The aged starving black dragon deadly hard in the stomach and slap it.
+    [00:37:40] Saturnfive cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:37:41] The aged starving black dragon makes a circular powerful sweep!
+    [00:37:41] The aged starving black dragon hits Jackofshadows deadly hard in the top of the back and damages it.
+    [00:37:41] The aged starving black dragon hits Queenoftheunderworld deadly hard in the top of the back and harms it.
+    [00:37:41] The aged starving black dragon hits Calypsso deadly hard in the left underarm and damages it.
+    [00:37:41] The aged starving black dragon hits Gingeko deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Camarobabe deadly hard in the stomach and damages it.
+    [00:37:41] The aged starving black dragon hits Ashlynne deadly hard in the left upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits Galexion deadly hard in the top of the back and damages it.
+    [00:37:41] The aged starving black dragon hits Tearex deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Fusspawnagain deadly hard in the lower back and damages it.
+    [00:37:41] The aged starving black dragon hits Minotaurus deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Thassadhar deadly hard in the stomach and harms it.
+    [00:37:41] The aged starving black dragon hits Saturnfive deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Dainya deadly hard in the lower back and damages it.
+    [00:37:41] The aged starving black dragon hits Lochnessmonsterr deadly hard in the right calf and damages it.
+    [00:37:41] The aged starving black dragon hits Lurik deadly hard in the left upper arm and harms it.
+    [00:37:41] The aged starving black dragon hits Tibba deadly hard in the top of the back and damages it.
+    [00:37:41] The aged starving black dragon hits Mycoal deadly hard in the left upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits Morphaana deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Draigo deadly hard in the right calf and damages it.
+    [00:37:41] The aged starving black dragon hits Tiberium deadly hard in the left upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits Azai deadly hard in the right foot and damages it.
+    [00:37:41] The aged starving black dragon hits Stelioskontos deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Dayday deadly hard in the right thigh and harms it.
+    [00:37:41] The aged starving black dragon hits Tiblet deadly hard in the right foot and damages it.
+    [00:37:41] The aged starving black dragon hits Mankurt deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Equil deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Rayen deadly hard in the left shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Antongalaktiki deadly hard in the right hand and damages it.
+    [00:37:41] The aged starving black dragon hits Tampa deadly hard in the lower back and harms it.
+    [00:37:41] The aged starving black dragon hits Drecius deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Lirielle deadly hard in the left underarm and harms it.
+    [00:37:41] The aged starving black dragon hits Rynmira deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Syrdon deadly hard in the right foot and damages it.
+    [00:37:41] The aged starving black dragon hits Prabhupada deadly hard in the left underarm and damages it.
+    [00:37:41] The aged starving black dragon hits Megantoo deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Baeowuf deadly hard in the stomach and harms it.
+    [00:37:41] The aged starving black dragon hits Paratus deadly hard in the left foot and damages it.
+    [00:37:41] The aged starving black dragon hits Starmoon deadly hard in the left shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Okiee deadly hard in the left hand and damages it.
+    [00:37:41] The aged starving black dragon hits Jort deadly hard in the lower back and damages it.
+    [00:37:41] The aged starving black dragon hits Miya deadly hard in the lower back and harms it.
+    [00:37:41] The aged starving black dragon hits Nahimana deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Unholypolly deadly hard in the chest and damages it.
+    [00:37:41] The aged starving black dragon hits Sirreal deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Anglomango deadly hard in the right foot and damages it.
+    [00:37:41] The aged starving black dragon hits Bradcubb deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Xeelei deadly hard in the right upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits Kyrelia deadly hard in the right hand and damages it.
+    [00:37:41] The aged starving black dragon hits Kaynsable deadly hard in the left upper arm and harms it.
+    [00:37:41] The aged starving black dragon hits Dargol deadly hard in the neck and harms it.
+    [00:37:41] The aged starving black dragon hits Dzhodzhok deadly hard in the head and damages it.
+    [00:37:41] The aged starving black dragon hits Kanick deadly hard in the lower back and damages it.
+    [00:37:41] The aged starving black dragon hits Shmoe deadly hard in the left upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits Equinn deadly hard in the right upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits aged hardened worg deadly hard in the thigh of the left foreleg and harms it.
+    [00:37:41] The aged starving black dragon hits Godric deadly hard in the right upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits Gunvar deadly hard in the right hand and damages it.
+    [00:37:41] The aged starving black dragon hits Screamnrobot deadly hard in the left hand and damages it.
+    [00:37:41] The aged starving black dragon hits Alantheman deadly hard in the lower back and damages it.
+    [00:37:41] The aged starving black dragon hits Roselina deadly hard in the left upper arm and damages it.
+    [00:37:41] The aged starving black dragon hits Jeloria deadly hard in the left underarm and damages it.
+    [00:37:41] The aged starving black dragon hits Kania deadly hard in the right foot and harms it.
+    [00:37:41] The aged starving black dragon hits Perseii deadly hard in the left hand and damages it.
+    [00:37:41] The aged starving black dragon hits Phoenixasterion deadly hard in the right foot and damages it.
+    [00:37:41] The aged starving black dragon hits Itsamysteryll deadly hard in the left foot and damages it.
+    [00:37:41] The aged starving black dragon hits Blueeyeddevil deadly hard in the lower back and damages it.
+    [00:37:41] The aged starving black dragon hits Munchkin deadly hard in the left calf and damages it.
+    [00:37:41] The aged starving black dragon hits Hiccup deadly hard in the right underarm and damages it.
+    [00:37:41] The aged starving black dragon hits Lucaen deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Darkterror deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Slavapiterskiy deadly hard in the head and harms it.
+    [00:37:41] The aged starving black dragon hits Kezeru deadly hard in the stomach and damages it.
+    [00:37:41] The aged starving black dragon hits Holy deadly hard in the right underarm and damages it.
+    [00:37:41] The aged starving black dragon hits Ssmokes deadly hard in the right shoulder and harms it.
+    [00:37:41] The aged starving black dragon hits Jimson deadly hard in the right calf and harms it.
+    [00:37:41] The aged starving black dragon hits Rolon deadly hard in the right foot and damages it.
+    [00:37:41] The aged starving black dragon hits Victalraham deadly hard in the right shoulder and damages it.
+    [00:37:41] The aged starving black dragon hits Audrie deadly hard in the right hand and damages it.
+    [00:37:41] The aged starving black dragon hits Cadillacjack deadly hard in the right foot and damages it.
+    [00:37:41] Audrie pierces The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:37:41] Bubtoo starts to cast Weakness on The aged starving black dragon.
+    [00:37:42] The aged starving black dragon hits Equil deadly hard in the stomach and damages it.
+    [00:37:42] Miya regains her bearings.
+    [00:37:44] Lomrandir regains his bearings.
+    [00:37:45] Your attack glances off The aged starving black dragon's armour.
+    [00:37:46] Ngin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:37:47] Tiggs pierces The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:37:47] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:37:49] Godric cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:37:49] Dalden regains his bearings.
+    [00:37:51] Meglegieth regains her bearings.
+    [00:37:51] You miss with the huge axe.
+    [00:37:51] Galexion regains his bearings.
+    [00:37:52] Lomrandir regains his bearings.
+    [00:37:54] The aged starving black dragon ignores Mirowen's antics.
+    [00:37:54] Camarobabe regains her bearings.
+    [00:37:54] Lirielle regains her bearings.
+    [00:37:54] Derri starts to cast Tentacles.
+    [00:37:54] Darkterror cuts The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:37:55] Cadillacjack regains his bearings.
+    [00:37:56] Lomrandir regains his bearings.
+    [00:37:56] Slavapiterskiy cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:37:56] Jaytoo mauls The aged starving black dragon deadly hard in the right shoulder and slaps it.
+    [00:37:56] You miss with the huge axe.
+    [00:37:57] Kaynsable regains his bearings.
+    [00:37:59] The aged starving black dragon hits Tiggs deadly hard in the right thigh and harms it.
+    [00:37:59] Sirreal regains his bearings.
+    [00:37:59] Dokhida cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:37:59] Mikhaelasterion regains his bearings.
+    [00:37:59] Synjor mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:00] Bubtoo casts Weakness on The aged starving black dragon.
+    [00:38:00] Vizzer starts to cast Ice Pillar.
+    [00:38:00] Jaytoo mauls The aged starving black dragon deadly hard in the left shoulder and slaps it.
+    [00:38:00] Tearex cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:38:01] Galexion regains his bearings.
+    [00:38:01] Tampa regains his bearings.
+    [00:38:01] Jimson cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:38:02] Cadillacjack regains his bearings.
+    [00:38:02] Dzhodzhok regains his bearings.
+    [00:38:02] Garraildi regains his bearings.
+    [00:38:02] You miss with the huge axe.
+    [00:38:03] Zuelatek cuts The aged starving black dragon deadly hard in the neck and slaps it.
+    [00:38:03] Derri casts Tentacles.
+    [00:38:04] Munchkin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:05] Victalraham regains his bearings.
+    [00:38:05] Lirielle regains her bearings.
+    [00:38:05] Ssmokes cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:05] Shaihulud regains his bearings.
+    [00:38:06] The aged starving black dragon hits Tiggs deadly hard in the left underarm and damages it.
+    [00:38:07] Azai cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:38:08] Ngin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:08] You miss with the huge axe.
+    [00:38:08] Paratus regains his bearings.
+    [00:38:08] Hawkhawk regains his bearings.
+    [00:38:08] Kelban regains his bearings.
+    [00:38:09] Vizzer casts Ice Pillar.
+    [00:38:10] Sorceress cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:11] Antongalaktiki cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:11] Mankurt regains his bearings.
+    [00:38:11] Kaynsable regains his bearings.
+    [00:38:12] Bleu cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:38:12] Rynmira starts to cast 'Cure Serious' on herself.
+    [00:38:12] Cadillacjack regains his bearings.
+    [00:38:13] Slavapiterskiy cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:13] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:38:13] Dargol cuts The aged starving black dragon deadly hard in the neck and slaps it.
+    [00:38:13] You miss with the huge axe.
+    [00:38:15] Synjor mauls The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:15] Queenoftheunderworld regains her bearings.
+    [00:38:15] Garraildi regains his bearings.
+    [00:38:17] Lurik cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:17] Zuelatek regains his bearings.
+    [00:38:19] Aedion regains his bearings.
+    [00:38:19] Saturnfive cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:19] You cut The aged starving black dragon deadly hard in the left foreclaw and slap it.
+    [00:38:19] Fusspawnagain regains his bearings.
+    [00:38:19] The aged starving black dragon ignores Mirowen's antics.
+    [00:38:20] Zuelatek cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:20] Kalo regains his bearings.
+    [00:38:22] Darkterror cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:22] Synjor mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:23] Tearex cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:38:25] Saturnfive cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:25] You miss with the huge axe.
+    [00:38:26] Rynmira casts 'Cure Serious' on herself.
+    [00:38:26] Azai pierces The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:26] Dokhida cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:38:27] Ssmokes cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:38:28] Aldurair cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:38:29] Blueeyeddevil regains his bearings.
+    [00:38:31] The aged starving black dragon makes a circular powerful sweep!
+    [00:38:31] The aged starving black dragon hits Jackofshadows deadly hard in the right shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Queenoftheunderworld deadly hard in the right thigh and harms it.
+    [00:38:31] The aged starving black dragon hits Gingeko deadly hard in the stomach and damages it.
+    [00:38:31] The aged starving black dragon hits Tiblet deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Camarobabe deadly hard in the right calf and damages it.
+    [00:38:31] The aged starving black dragon hits Kelban deadly hard in the chest and damages it.
+    [00:38:31] The aged starving black dragon hits Equinn deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Galexion deadly hard in the right underarm and damages it.
+    [00:38:31] The aged starving black dragon hits Tearex deadly hard in the left shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Fusspawnagain deadly hard in the top of the back and damages it.
+    [00:38:31] The aged starving black dragon hits Minotaurus deadly hard in the right shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Jeloria deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Thassadhar deadly hard in the right thigh and harms it.
+    [00:38:31] The aged starving black dragon hits Saturnfive deadly hard in the head and harms it.
+    [00:38:31] The aged starving black dragon hits Dainya deadly hard in the stomach and damages it.
+    [00:38:31] The aged starving black dragon hits Lochnessmonsterr deadly hard in the right thigh and damages it.
+    [00:38:31] The aged starving black dragon hits Lurik deadly hard in the right upper arm and harms it.
+    [00:38:31] The aged starving black dragon hits Tibba deadly hard in the left shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Phoenixasterion deadly hard in the right eye and damages it.
+    [00:38:31] The aged starving black dragon hits Morphaana deadly hard in the right upper arm and damages it.
+    [00:38:31] The aged starving black dragon hits Tiberium deadly hard in the right shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Azai deadly hard in the left calf and harms it.
+    [00:38:31] The aged starving black dragon hits Stelioskontos deadly hard in the left shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Dylanmciam deadly hard in the right hand and damages it.
+    [00:38:31] The aged starving black dragon hits Mankurt deadly hard in the chest and damages it.
+    [00:38:31] The aged starving black dragon hits Rayen deadly hard in the right shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Antongalaktiki deadly hard in the left thigh and damages it.
+    [00:38:31] The aged starving black dragon hits Tampa deadly hard in the chest and harms it.
+    [00:38:31] The aged starving black dragon hits Drecius deadly hard in the right shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Lirielle deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Rynmira deadly hard in the chest and damages it.
+    [00:38:31] The aged starving black dragon hits Syrdon deadly hard in the stomach and damages it.
+    [00:38:31] The aged starving black dragon hits Prabhupada deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Megantoo deadly hard in the left thigh and damages it.
+    [00:38:31] The aged starving black dragon hits Baeowuf deadly hard in the right underarm and harms it.
+    [00:38:31] The aged starving black dragon hits Paratus deadly hard in the right hand and damages it.
+    [00:38:31] The aged starving black dragon hits Starmoon deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Okiee deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Jort deadly hard in the right foot and damages it.
+    [00:38:31] The aged starving black dragon hits Miya deadly hard in the right underarm and harms it.
+    [00:38:31] The aged starving black dragon hits Nahimana deadly hard in the stomach and damages it.
+    [00:38:31] The aged starving black dragon hits Unholypolly deadly hard in the left shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Sirreal deadly hard in the right calf and damages it.
+    [00:38:31] The aged starving black dragon hits Bradcubb deadly hard in the left upper arm and damages it.
+    [00:38:31] The aged starving black dragon hits Anglomango deadly hard in the chest and damages it.
+    [00:38:31] The aged starving black dragon hits Xeelei deadly hard in the left upper arm and damages it.
+    [00:38:31] The aged starving black dragon hits Kyrelia deadly hard in the left foot and damages it.
+    [00:38:31] The aged starving black dragon hits Kaynsable deadly hard in the neck and harms it.
+    [00:38:31] The aged starving black dragon hits Dargol deadly hard in the left shoulder and harms it.
+    [00:38:31] The aged starving black dragon hits Kanick deadly hard in the chest and damages it.
+    [00:38:31] The aged starving black dragon hits Shmoe deadly hard in the left hand and damages it.
+    [00:38:31] The aged starving black dragon hits aged hardened worg deadly hard in the right shoulder and harms it.
+    [00:38:31] The aged starving black dragon hits Indigoe deadly hard in the right thigh and damages it.
+    [00:38:31] The aged starving black dragon hits Godric deadly hard in the right shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Gunvar deadly hard in the neck and damages it.
+    [00:38:31] The aged starving black dragon hits Screamnrobot deadly hard in the stomach and damages it.
+    [00:38:31] The aged starving black dragon hits Alantheman deadly hard in the right calf and damages it.
+    [00:38:31] The aged starving black dragon hits Kania deadly hard in the left foot and harms it.
+    [00:38:31] The aged starving black dragon hits Perseii deadly hard in the left foot and damages it.
+    [00:38:31] The aged starving black dragon hits Itsamysteryll deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Blueeyeddevil deadly hard in the right hand and damages it.
+    [00:38:31] The aged starving black dragon hits Aldurair deadly hard in the right thigh and harms it.
+    [00:38:31] The aged starving black dragon hits Munchkin deadly hard in the right hand and harms it.
+    [00:38:31] The aged starving black dragon hits Hiccup deadly hard in the right foot and harms it.
+    [00:38:31] The aged starving black dragon hits Darkterror deadly hard in the right calf and damages it.
+    [00:38:31] The aged starving black dragon hits Slavapiterskiy deadly hard in the left hand and harms it.
+    [00:38:31] The aged starving black dragon hits Kezeru deadly hard in the left upper arm and damages it.
+    [00:38:31] The aged starving black dragon hits Holy deadly hard in the left shoulder and damages it.
+    [00:38:31] The aged starving black dragon hits Ssmokes deadly hard in the right thigh and harms it.
+    [00:38:31] The aged starving black dragon hits Jimson deadly hard in the neck and harms it.
+    [00:38:31] The aged starving black dragon hits Victalraham deadly hard in the left calf and damages it.
+    [00:38:31] The aged starving black dragon hits Audrie deadly hard in the chest and damages it.
+    [00:38:31] Saturnfive cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:31] You miss with the huge axe.
+    [00:38:31] Sorceress regains her bearings.
+    [00:38:31] Jaytoo mauls The aged starving black dragon deadly hard in the head and slaps it.
+    [00:38:32] Kania regains her bearings.
+    [00:38:32] Aldurair regains his bearings.
+    [00:38:33] Ssmokes cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:38:35] Jaytoo mauls The aged starving black dragon deadly hard in the left shoulder and slaps it.
+    [00:38:35] Slavapiterskiy cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:35] Jackofshadows regains his bearings.
+    [00:38:36] Lurik cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:38:36] You cut The aged starving black dragon deadly hard in the left underarm and slap it.
+    [00:38:37] Dargol cuts The aged starving black dragon deadly hard in the head and slaps it.
+    [00:38:37] Sorceress cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:38] Mankurt regains his bearings.
+    [00:38:38] Lochnessm regains her bearings.
+    [00:38:39] Antongalaktiki cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:39] Hawkhawk regains his bearings.
+    [00:38:39] Audrie cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:38:39] Kalrach regains his bearings.
+    [00:38:40] The aged starving black dragon hits Sirreal deadly hard in the right thigh and harms it.
+    [00:38:40] Aldenela cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:38:41] Unholypolly starts to cast Scorn of Libila.
+    [00:38:41] You start to cast Light of Fo.
+    [00:38:42] Ssmokes regains her bearings.
+    [00:38:42] Morphaana regains her bearings.
+    [00:38:42] Zuelatek cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:44] The aged starving black dragon breathes fire!
+    [00:38:44] The aged starving black dragon burns you.
+    [00:38:44] Minotaurus regains his bearings.
+    [00:38:44] You miss with the huge axe.
+    [00:38:44] Ssmokes cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:44] Antongalaktiki cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:38:45] Godric cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:38:45] Lurik cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:46] Sorceress starts to cast Scorn of Libila.
+    [00:38:46] The aged starving black dragon hits Sirreal deadly hard in the right underarm and damages it.
+    [00:38:47] Amazingmarkz starts to cast Cure Light on Roselina.
+    [00:38:47] You miss with the huge axe.
+    [00:38:47] Dokhida regains her bearings.
+    [00:38:48] Stelioskontos regains his bearings.
+    [00:38:48] Hawkhawk regains his bearings.
+    [00:38:50] Xeelei regains his bearings.
+    [00:38:51] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:38:51] Dalnacriech pierces The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:38:51] Aspirineilia cuts The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:38:52] You start to cast Light of Fo.
+    [00:38:52] Vorlox cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:38:53] Jimson cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:54] Darkterror regains his bearings.
+    [00:38:55] Lurik cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:55] Galexion regains his bearings.
+    [00:38:55] Jaytoo mauls The aged starving black dragon deadly hard in the right shoulder and slaps it.
+    [00:38:55] Unholypolly casts Scorn of Libila.
+    [00:38:55] Megantoo regains her bearings.
+    [00:38:56] Amazingmarkz casts Cure Light on Roselina.
+    [00:38:57] The aged starving black dragon ignores Mirowen's antics.
+    [00:38:57] Tearex cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:38:58] Ngin cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:38:58] Bleu cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:38:59] Jaytoo mauls The aged starving black dragon deadly hard in the left shoulder and slaps it.
+    [00:38:59] Tibba regains her bearings.
+    [00:39:00] Sorceress casts Scorn of Libila.
+    [00:39:01] The aged starving black dragon makes a circular powerful sweep!
+    [00:39:01] The aged starving black dragon hits Queenoftheunderworld deadly hard in the left shoulder and damages it.
+    [00:39:01] The aged starving black dragon hits Itsamysteryll deadly hard in the stomach and damages it.
+    [00:39:01] The aged starving black dragon hits Megantoo deadly hard in the left hand and damages it.
+    [00:39:01] The aged starving black dragon hits Gingeko deadly hard in the left thigh and damages it.
+    [00:39:01] The aged starving black dragon hits Tiblet deadly hard in the right upper arm and damages it.
+    [00:39:01] The aged starving black dragon hits Sunduc deadly hard in the left thigh and damages it.
+    [00:39:01] The aged starving black dragon hits Screamnrobot deadly hard in the right thigh and damages it.
+    [00:39:01] The aged starving black dragon hits Kelban deadly hard in the lower back and damages it.
+    [00:39:01] The aged starving black dragon hits Indigoe deadly hard in the left shoulder and damages it.
+    [00:39:01] The aged starving black dragon hits Galexion deadly hard in the stomach and damages it.
+    [00:39:01] The aged starving black dragon hits Minotaurus deadly hard in the left underarm and damages it.
+    [00:39:01] The aged starving black dragon hits Thassadhar deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Nahimana deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Dainya deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Lochnessmonsterr deadly hard in the right calf and damages it.
+    [00:39:01] The aged starving black dragon hits Lurik deadly hard in the left upper arm and damages it.
+    [00:39:01] The aged starving black dragon hits Tibba deadly hard in the left hand and damages it.
+    [00:39:01] The aged starving black dragon hits Morphaana deadly hard in the right foot and damages it.
+    [00:39:01] The aged starving black dragon hits Tiberium deadly hard in the right underarm and damages it.
+    [00:39:01] The aged starving black dragon hits Azai deadly hard in the right thigh and damages it.
+    [00:39:01] The aged starving black dragon hits Stelioskontos deadly hard in the right calf and damages it.
+    [00:39:01] The aged starving black dragon hits Dayday deadly hard in the left foot and damages it.
+    [00:39:01] The aged starving black dragon hits Mankurt deadly hard in the top of the back and damages it.
+    [00:39:01] The aged starving black dragon hits Rayen deadly hard in the left upper arm and damages it.
+    [00:39:01] The aged starving black dragon hits Antongalaktiki deadly hard in the right calf and damages it.
+    [00:39:01] The aged starving black dragon hits Tampa deadly hard in the left calf and damages it.
+    [00:39:01] The aged starving black dragon hits Drecius deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Lirielle deadly hard in the left calf and damages it.
+    [00:39:01] The aged starving black dragon hits Baeowuf deadly hard in the left upper arm and damages it.
+    [00:39:01] The aged starving black dragon hits Paratus deadly hard in the right shoulder and damages it.
+    [00:39:01] The aged starving black dragon hits Starmoon deadly hard in the head and damages it.
+    [00:39:01] The aged starving black dragon hits Okiee deadly hard in the left calf and damages it.
+    [00:39:01] The aged starving black dragon hits Jort deadly hard in the right underarm and damages it.
+    [00:39:01] The aged starving black dragon hits Miya deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Bradcubb deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Anglomango deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Xeelei deadly hard in the right calf and damages it.
+    [00:39:01] The aged starving black dragon hits Dargol deadly hard in the stomach and damages it.
+    [00:39:01] The aged starving black dragon hits Kaynsable deadly hard in the left underarm and damages it.
+    [00:39:01] The aged starving black dragon hits Dzhodzhok deadly hard in the right upper arm and damages it.
+    [00:39:01] The aged starving black dragon hits Shmoe deadly hard in the left underarm and damages it.
+    [00:39:01] The aged starving black dragon hits aged hardened worg deadly hard in the thigh of the right foreleg and harms it.
+    [00:39:01] The aged starving black dragon hits Godric deadly hard in the right shoulder and damages it.
+    [00:39:01] The aged starving black dragon hits Tearex deadly hard in the left hand and damages it.
+    [00:39:01] The aged starving black dragon hits Nervousfish deadly hard in the top of the back and damages it.
+    [00:39:01] The aged starving black dragon hits Kania deadly hard in the right upper arm and damages it.
+    [00:39:01] The aged starving black dragon hits Munchkin deadly hard in the right shoulder and damages it.
+    [00:39:01] The aged starving black dragon hits Hiccup deadly hard in the left upper arm and damages it.
+    [00:39:01] The aged starving black dragon hits Darkterror deadly hard in the right foot and damages it.
+    [00:39:01] The aged starving black dragon hits Slavapiterskiy deadly hard in the chest and damages it.
+    [00:39:01] The aged starving black dragon hits Holy deadly hard in the top of the back and damages it.
+    [00:39:01] The aged starving black dragon hits Ssmokes deadly hard in the left underarm and damages it.
+    [00:39:01] The aged starving black dragon hits Jimson deadly hard in the left hand and damages it.
+    [00:39:01] The aged starving black dragon hits Victalraham deadly hard in the left thigh and damages it.
+    [00:39:01] The aged starving black dragon hits Audrie deadly hard in the left hand and damages it.
+    [00:39:01] Synjor mauls The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:01] Dalnacriech pierces The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:03] Vorlox cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:39:04] Jeloria starts to cast 'Cure Light' on herself.
+    [00:39:04] Slavapiterskiy cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:04] The aged starving black dragon hits Torkell deadly hard in the left underarm and damages it.
+    [00:39:06] You cast Light of Fo.
+    [00:39:06] You heal some of your wounds with Light of Fo.
+    [00:39:06] Talios cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:39:06] You miss with the huge axe.
+    [00:39:06] Azai regains his bearings.
+    [00:39:09] Lochnessmonsterr regains his bearings.
+    [00:39:09] Slavapiterskiy cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:10] Icfred regains his bearings.
+    [00:39:10] You miss with the huge axe.
+    [00:39:12] Dzhodzhok regains his bearings.
+    [00:39:16] Bleu cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:39:16] You miss with the huge axe.
+    [00:39:16] Jimson cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:39:18] Sorceress cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:39:19] Mankurt pushes The aged starving black dragon over with his shield.
+    [00:39:20] The aged starving black dragon regains his bearings.
+    [00:39:20] Shadowmasterr starts to cast Light of Fo.
+    [00:39:21] Synjor mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:39:21] You miss with the huge axe.
+    [00:39:22] The aged starving black dragon hits Torkell deadly hard in the stomach and harms it.
+    [00:39:23] Sorceress starts to cast Weakness on The aged starving black dragon.
+    [00:39:23] Nahimana regains her bearings.
+    [00:39:24] Godric cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:39:24] Synjor mauls The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:25] Mirowen starts to annoy The aged starving black dragon in all imaginable ways.
+    [00:39:25] Itsamysteryll regains her bearings.
+    [00:39:26] Thassadhar regains his bearings.
+    [00:39:26] Slavapiterskiy cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:27] Ragecg regains his bearings.
+    [00:39:27] You miss with the huge axe.
+    [00:39:28] Paratus regains his bearings.
+    [00:39:28] Synjor mauls The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:39:29] Ssmokes cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:39:30] Azai regains his bearings.
+    [00:39:30] Tiggs pierces The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:39:30] Munchkin cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:39:31] Tearex cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:39:31] The aged starving black dragon ignores Mirowen's antics.
+    [00:39:31] The aged starving black dragon hits Torkell deadly hard in the top of the back and harms it.
+    [00:39:31] Syrdon regains her bearings.
+    [00:39:32] Slavapiterskiy cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:39:32] Synjor mauls The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:33] You cut The aged starving black dragon deadly hard in the right underarm and slap it.
+    [00:39:33] Kyrelia regains her bearings.
+    [00:39:34] Alyse regains her bearings.
+    [00:39:34] Dalnacriech pierces The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:39:35] Shadowmasterr casts Light of Fo.
+    [00:39:35] Tiggs cuts The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:39:35] Thassadhar pushes The aged starving black dragon over with his shield.
+    [00:39:36] Azai cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:36] Sirreal regains his bearings.
+    [00:39:36] Synjor mauls The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:39:36] Dargol cuts The aged starving black dragon deadly hard in the head and slaps it.
+    [00:39:37] The aged starving black dragon regains his bearings.
+    [00:39:38] Linuiel regains his bearings.
+    [00:39:38] You miss with the huge axe.
+    [00:39:39] Jimson cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:39:40] Ssmokes cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:41] Munchkin cuts The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:39:42] Sorceress casts Weakness on The aged starving black dragon.
+    [00:39:42] Tiberium starts to cast Ice Pillar.
+    [00:39:42] Audrie pierces The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:44] Fusspawnagain regains his bearings.
+    [00:39:44] You miss with the huge axe.
+    [00:39:45] The aged starving black dragon wingbuffs Torkell deadly hard in the stomach and damages it.
+    [00:39:45] The aged starving black dragon hits Torkell deadly hard in the chest and harms it.
+    [00:39:45] Dokhida cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:45] Drjacobhayes regains his bearings.
+    [00:39:45] Cadillacjack regains his bearings.
+    [00:39:46] Ssmokes cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:46] Indigoe pushes The aged starving black dragon over with her shield.
+    [00:39:47] Scorw cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:47] Mankurt regains his bearings.
+    [00:39:48] The aged starving black dragon regains his bearings.
+    [00:39:49] Sorceress cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:49] Stelioskontos regains his bearings.
+    [00:39:49] You miss with the huge axe.
+    [00:39:50] Bleu cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:39:51] Tiberium fails to channel the 'Ice Pillar'.
+    [00:39:51] Indigoe regains her bearings.
+    [00:39:51] Darkterror regains his bearings.
+    [00:39:51] Kalrach regains his bearings.
+    [00:39:51] Dalden cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:39:52] Garraildi regains his bearings.
+    [00:39:52] The aged starving black dragon hits Torkell deadly hard in the stomach and damages it.
+    [00:39:52] Gunvar regains her bearings.
+    [00:39:53] Dargol cuts The aged starving black dragon deadly hard in the left shoulder and slaps it.
+    [00:39:53] Jaytoo mauls The aged starving black dragon deadly hard in the neck and slaps it.
+    [00:39:53] Tearex cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:39:53] Mankurt pushes The aged starving black dragon over with his shield.
+    [00:39:54] Prabhupada regains his bearings.
+    [00:39:55] You miss with the huge axe.
+    [00:39:55] Bradcubb regains his bearings.
+    [00:39:55] Zuelatek cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:39:56] The aged starving black dragon regains his bearings.
+    [00:39:56] Kelban regains his bearings.
+    [00:39:58] Dalnacriech pierces The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:39:58] The aged starving black dragon hits Ragnar extremely hard in the chest and harms it.
+    [00:39:58] Munchkin cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:40:01] Prabhupada seems to shelter his right parts.
+    [00:40:01] Your attack glances off The aged starving black dragon's armour.
+    [00:40:01] Ragnar regains his bearings.
+    [00:40:01] Shmoe regains his bearings.
+    [00:40:01] Grizwaldo regains his bearings.
+    [00:40:02] Dalnacriech pierces The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:40:03] Jimson cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:40:03] Cadillacjack regains his bearings.
+    [00:40:03] Tiberium starts to cast Ice Pillar.
+    [00:40:04] Audrie pierces The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:40:05] Dalden regains his bearings.
+    [00:40:06] Kanick regains his bearings.
+    [00:40:06] Mrkettle starts to cast Cure Light on Torkell.
+    [00:40:06] Drecius regains his bearings.
+    [00:40:07] The aged starving black dragon hits Sunduc deadly hard in the left thigh and damages it.
+    [00:40:07] Screamnrobot regains his bearings.
+    [00:40:07] You cut The aged starving black dragon deadly hard in the left underarm and slap it.
+    [00:40:07] Equinn regains his bearings.
+    [00:40:11] Synjor mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:11] The aged starving black dragon hits Sunduc deadly hard in the left thigh and damages it.
+    [00:40:11] Draigo regains his bearings.
+    [00:40:12] Tiberium casts Ice Pillar.
+    [00:40:12] Your attack glances off The aged starving black dragon's armour.
+    [00:40:13] Dokhida cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:13] Dalden cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:40:15] Mycoal regains his bearings.
+    [00:40:15] Munchkin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:40:15] Mrkettle casts Cure Light on Torkell.
+    [00:40:15] Synjor mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:17] Dalnacriech pierces The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:40:17] Minami cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:18] You miss with the huge axe.
+    [00:40:18] Alantheman regains his bearings.
+    [00:40:20] Rayen regains his bearings.
+    [00:40:20] Bleu cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:40:21] Aspirineilia cuts The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:40:21] Mankurt pushes The aged starving black dragon over with his shield.
+    [00:40:21] Zuelatek regains his bearings.
+    [00:40:21] Dargol cuts The aged starving black dragon deadly hard in the head and slaps it.
+    [00:40:21] Vorlox cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:21] The aged starving black dragon regains his bearings.
+    [00:40:21] Ngin cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:40:22] Vessel cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:40:22] Fusspawnagain regains his bearings.
+    [00:40:22] Shaihulud regains his bearings.
+    [00:40:23] Drecius regains his bearings.
+    [00:40:23] Slavapiterskiy cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:23] You miss with the huge axe.
+    [00:40:25] The aged starving black dragon shakes the earth!
+    [00:40:25] The aged starving black dragon hits Sunduc deadly hard in the left upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Dylanmciam deadly hard in the left calf and damages it.
+    [00:40:25] The aged starving black dragon hits Saturnfive deadly hard in the right thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Gingeko deadly hard in the right shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Tiblet deadly hard in the left upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Camarobabe deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Saltybadger deadly hard in the right underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Kelban deadly hard in the left hand and damages it.
+    [00:40:25] The aged starving black dragon hits Jackofshadows deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Equinn deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Indigoe deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits Munchkin deadly hard in the right shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Galexion deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Baeowuf deadly hard in the left calf and damages it.
+    [00:40:25] The aged starving black dragon hits Hiccup deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Holy deadly hard in the left hand and damages it.
+    [00:40:25] The aged starving black dragon hits Jeloria deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Thassadhar deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Dainya deadly hard in the left thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Rayen deadly hard in the right calf and damages it.
+    [00:40:25] The aged starving black dragon hits Lochnessmonsterr deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Lurik deadly hard in the right foot and damages it.
+    [00:40:25] The aged starving black dragon hits Antongalaktiki deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits Tibba deadly hard in the right calf and damages it.
+    [00:40:25] The aged starving black dragon hits Mycoal deadly hard in the neck and damages it.
+    [00:40:25] The aged starving black dragon hits Dalnacriech deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Morphaana deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Draigo deadly hard in the neck and damages it.
+    [00:40:25] The aged starving black dragon hits Tiberium deadly hard in the left thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Azai deadly hard in the left calf and damages it.
+    [00:40:25] The aged starving black dragon hits Stelioskontos deadly hard in the stomach and damages it.
+    [00:40:25] The aged starving black dragon hits Dayday deadly hard in the lower back and damages it.
+    [00:40:25] The aged starving black dragon hits Mankurt deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Fusspawnagain deadly hard in the neck and damages it.
+    [00:40:25] The aged starving black dragon hits Garraildi deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Queenoftheunderworld deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Tampa deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Drecius deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Syrdon deadly hard in the right foot and damages it.
+    [00:40:25] The aged starving black dragon hits Rynmira deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Prabhupada deadly hard in the right foot and damages it.
+    [00:40:25] The aged starving black dragon hits Amazingmarkz deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Megantoo deadly hard in the right underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Paratus deadly hard in the stomach and damages it.
+    [00:40:25] The aged starving black dragon hits Starmoon deadly hard in the right foot and damages it.
+    [00:40:25] The aged starving black dragon hits Jort deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Miya deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Nahimana deadly hard in the left calf and damages it.
+    [00:40:25] The aged starving black dragon hits Unholypolly deadly hard in the left calf and damages it.
+    [00:40:25] The aged starving black dragon hits Bradcubb deadly hard in the left hand and damages it.
+    [00:40:25] The aged starving black dragon hits Anglomango deadly hard in the lower back and damages it.
+    [00:40:25] The aged starving black dragon hits Sirreal deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Xeelei deadly hard in the stomach and damages it.
+    [00:40:25] The aged starving black dragon hits Kyrelia deadly hard in the right calf and damages it.
+    [00:40:25] The aged starving black dragon hits Dargol deadly hard in the left thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Kaynsable deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Dzhodzhok deadly hard in the left hand and damages it.
+    [00:40:25] The aged starving black dragon hits Kanick deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Shmoe deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits aged hardened worg deadly hard in the thigh of the left hindleg and harms it.
+    [00:40:25] The aged starving black dragon hits Godric deadly hard in the right thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Tearex deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Gunvar deadly hard in the neck and damages it.
+    [00:40:25] The aged starving black dragon hits Nervousfish deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Earldorman deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Screamnrobot deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Alantheman deadly hard in the right calf and damages it.
+    [00:40:25] The aged starving black dragon hits Hawkhawk deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Kania deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Lochnessm deadly hard in the right thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Scorw deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Thulio deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Itsamysteryll deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Linuiel deadly hard in the right shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Nusfire deadly hard in the left thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Mirowen deadly hard in the lower back and damages it.
+    [00:40:25] The aged starving black dragon hits Darkterror deadly hard in the neck and damages it.
+    [00:40:25] The aged starving black dragon hits Slavapiterskiy deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Kezeru deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Ssmokes deadly hard in the left upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Jimson deadly hard in the stomach and damages it.
+    [00:40:25] The aged starving black dragon hits Victalraham deadly hard in the lower back and damages it.
+    [00:40:25] The aged starving black dragon hits Audrie deadly hard in the left upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Talios deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Cadillacjack deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Wigginstyle deadly hard in the right foot and damages it.
+    [00:40:25] The aged starving black dragon hits Niladaya deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Minotaurus deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Kaiserwerft deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Kalo deadly hard in the left upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Nyest deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Sorceress deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Ashley deadly hard in the right shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Equil deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Alyse deadly hard in the lower back and damages it.
+    [00:40:25] The aged starving black dragon hits Lexin deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Ashlynne deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits aged worg deadly hard in the thigh of the right foreleg and harms it.
+    [00:40:25] The aged starving black dragon hits Minami deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Bleu deadly hard in the right foot and damages it.
+    [00:40:25] The aged starving black dragon hits Aldenela deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Lochnessma deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Icfred deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Snoy deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Radnii deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Shaihulud deadly hard in the lower back and damages it.
+    [00:40:25] The aged starving black dragon hits Tiggs deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Hollydaye deadly hard in the stomach and damages it.
+    [00:40:25] The aged starving black dragon hits Noobforhire deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Kalrach deadly hard in the right upper arm and damages it.
+    [00:40:25] The aged starving black dragon hits Barazh deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Aspirineilia deadly hard in the head and damages it.
+    [00:40:25] The aged starving black dragon hits Dalden deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Meglegieth deadly hard in the head and damages it.
+    [00:40:25] The aged starving black dragon hits Grizwaldo deadly hard in the right shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Aereya deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Aedion deadly hard in the left thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Drjacobhayes deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Vessel deadly hard in the stomach and damages it.
+    [00:40:25] The aged starving black dragon hits Journaya deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Meiko deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Talear deadly hard in the chest and damages it.
+    [00:40:25] The aged starving black dragon hits Zuelatek deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits Ngin deadly hard in the top of the back and damages it.
+    [00:40:25] The aged starving black dragon hits Aldurair deadly hard in the left thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Jaytoo deadly hard in the right shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Ivarsrinkis deadly hard in the right thigh and damages it.
+    [00:40:25] The aged starving black dragon hits Lucaen deadly hard in the right foot and damages it.
+    [00:40:25] The aged starving black dragon hits Sellybrait deadly hard in the left calf and damages it.
+    [00:40:25] The aged starving black dragon hits Lochnessmb deadly hard in the left underarm and damages it.
+    [00:40:25] The aged starving black dragon hits Okiee deadly hard in the lower back and damages it.
+    [00:40:25] The aged starving black dragon hits you deadly hard in the right hand and damages it.
+    [00:40:25] The aged starving black dragon hits Vorlox deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits Dokhida deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits Ragecg deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits Lomrandir deadly hard in the left foot and damages it.
+    [00:40:25] The aged starving black dragon hits Ragnar deadly hard in the left shoulder and damages it.
+    [00:40:25] The aged starving black dragon hits Mikhaelasterion deadly hard in the neck and damages it.
+    [00:40:25] The aged starving black dragon hits Synjor deadly hard in the stomach and damages it.
+    [00:40:25] Darkterror cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:40:25] Mycoal regains his bearings.
+    [00:40:26] Rynmira regains her bearings.
+    [00:40:26] Lochnessmonsterr regains his bearings.
+    [00:40:27] Earldorman regains his bearings.
+    [00:40:27] Lurik cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:40:27] Dargol cuts The aged starving black dragon deadly hard in the left shoulder and slaps it.
+    [00:40:28] Equinn regains his bearings.
+    [00:40:28] Sellybrait regains her bearings.
+    [00:40:28] Lochnessm regains her bearings.
+    [00:40:28] Jort regains his bearings.
+    [00:40:28] Jaytoo mauls The aged starving black dragon deadly hard in the neck and slaps it.
+    [00:40:29] You miss with the huge axe.
+    [00:40:30] Synjor mauls The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:40:31] Jimson cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:40:32] Vorlox cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:32] Screamnrobot regains his bearings.
+    [00:40:33] Ngin cuts The aged starving black dragon deadly hard in the left foreclaw and slaps it.
+    [00:40:33] Tearex cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:33] Aedion regains his bearings.
+    [00:40:34] Tampa regains his bearings.
+    [00:40:35] Jeloria starts to cast 'Cure Light' on herself.
+    [00:40:35] You miss with the huge axe.
+    [00:40:35] Kalrach regains his bearings.
+    [00:40:36] Ssmokes cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:36] Aldenela cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:40:36] Antongalaktiki cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:40:37] Kanick regains his bearings.
+    [00:40:37] Aspirineilia cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:38] Rynmira starts to cast 'Cure Serious' on herself.
+    [00:40:38] Talios regains his bearings.
+    [00:40:39] Xeelei regains his bearings.
+    [00:40:40] Jaytoo mauls The aged starving black dragon deadly hard in the neck and slaps it.
+    [00:40:40] Lurik cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:40] You miss with the huge axe.
+    [00:40:41] Synjor regains his bearings.
+    [00:40:45] Dalden regains his bearings.
+    [00:40:45] Itsamysteryll starts to cast 'Cure Medium' on herself.
+    [00:40:46] You miss with the huge axe.
+    [00:40:46] Dokhida cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:46] Lochnessm starts to cast Light of Fo.
+    [00:40:49] Jimson cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:40:49] Xeelei regains his bearings.
+    [00:40:50] Dalden regains his bearings.
+    [00:40:51] Slavapiterskiy cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:40:52] Rynmira casts 'Cure Serious' on herself.
+    [00:40:52] You miss with the huge axe.
+    [00:40:52] Sellybrait regains her bearings.
+    [00:40:52] Jeloria regains her bearings.
+    [00:40:52] Jeloria starts to cast 'Cure Light' on herself.
+    [00:40:53] Lurik regains his bearings.
+    [00:40:54] Godric cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:40:55] Victalraham regains his bearings.
+    [00:40:56] Itsamysteryll casts 'Cure Medium' on herself.
+    [00:40:56] Journaya regains her bearings.
+    [00:40:57] Zuelatek cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:40:57] The aged starving black dragon skillfully evades the blow to the stomach.
+    [00:40:57] Gingeko regains his bearings.
+    [00:40:58] Garraildi regains his bearings.
+    [00:40:59] Kezeru regains his bearings.
+    [00:40:59] Radnii regains his bearings.
+    [00:40:59] Minami cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:01] Dargol cuts The aged starving black dragon deadly hard in the right shoulder and slaps it.
+    [00:41:01] Lochnessm casts Light of Fo.
+    [00:41:01] Lochnessm heals some of your wounds with Light of Fo.
+    [00:41:01] Jimson cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:41:01] Tearex cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:41:01] Sorceress starts to cast Scorn of Libila.
+    [00:41:03] Slavapiterskiy cuts The aged starving black dragon deadly hard in the right foreclaw and slaps it.
+    [00:41:03] You cut The aged starving black dragon deadly hard in the chest and slap it.
+    [00:41:03] Jaytoo mauls The aged starving black dragon deadly hard in the head and slaps it.
+    [00:41:04] Lochnessm regains her bearings.
+    [00:41:04] Prabhupada regains his bearings.
+    [00:41:04] Unholypolly starts to cast Scorn of Libila.
+    [00:41:04] Shmoe regains his bearings.
+    [00:41:04] Snoy regains his bearings.
+    [00:41:05] Thassadhar regains his bearings.
+    [00:41:06] The aged starving black dragon makes a circular powerful sweep!
+    [00:41:06] The aged starving black dragon hits Jackofshadows deadly hard in the stomach and damages it.
+    [00:41:06] The aged starving black dragon hits Kezeru deadly hard in the right upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Saturnfive deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Gingeko deadly hard in the left thigh and damages it.
+    [00:41:06] The aged starving black dragon hits Tiblet deadly hard in the head and damages it.
+    [00:41:06] The aged starving black dragon hits Scorw deadly hard in the left upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Equinn deadly hard in the lower back and damages it.
+    [00:41:06] The aged starving black dragon hits Indigoe deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Munchkin deadly hard in the stomach and damages it.
+    [00:41:06] The aged starving black dragon hits Galexion deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Baeowuf deadly hard in the head and damages it.
+    [00:41:06] The aged starving black dragon hits Hiccup deadly hard in the left foot and damages it.
+    [00:41:06] The aged starving black dragon hits Aldenela deadly hard in the lower back and damages it.
+    [00:41:06] The aged starving black dragon hits Jeloria deadly hard in the left foot and damages it.
+    [00:41:06] The aged starving black dragon hits Thassadhar deadly hard in the right calf and damages it.
+    [00:41:06] The aged starving black dragon hits Dainya deadly hard in the right foot and damages it.
+    [00:41:06] The aged starving black dragon hits Rayen deadly hard in the right shoulder and damages it.
+    [00:41:06] The aged starving black dragon hits Lochnessmonsterr deadly hard in the left shoulder and damages it.
+    [00:41:06] The aged starving black dragon hits Lurik deadly hard in the right upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Antongalaktiki deadly hard in the right hand and damages it.
+    [00:41:06] The aged starving black dragon hits Tibba deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Mycoal deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Hayzues deadly hard in the right foot and damages it.
+    [00:41:06] The aged starving black dragon hits Cadillacjack deadly hard in the left foot and damages it.
+    [00:41:06] The aged starving black dragon hits Morphaana deadly hard in the right foot and damages it.
+    [00:41:06] The aged starving black dragon hits Draigo deadly hard in the right underarm and damages it.
+    [00:41:06] The aged starving black dragon hits Noobforhire deadly hard in the left thigh and damages it.
+    [00:41:06] The aged starving black dragon hits Tiberium deadly hard in the left upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Azai deadly hard in the stomach and damages it.
+    [00:41:06] The aged starving black dragon hits Stelioskontos deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Dayday deadly hard in the right calf and damages it.
+    [00:41:06] The aged starving black dragon hits Mankurt deadly hard in the right shoulder and damages it.
+    [00:41:06] The aged starving black dragon hits Fusspawnagain deadly hard in the head and damages it.
+    [00:41:06] The aged starving black dragon hits Garraildi deadly hard in the left upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Queenoftheunderworld deadly hard in the right calf and damages it.
+    [00:41:06] The aged starving black dragon hits Tampa deadly hard in the head and damages it.
+    [00:41:06] The aged starving black dragon hits Drecius deadly hard in the left calf and damages it.
+    [00:41:06] The aged starving black dragon hits Rynmira deadly hard in the right thigh and damages it.
+    [00:41:06] The aged starving black dragon hits Prabhupada deadly hard in the head and damages it.
+    [00:41:06] The aged starving black dragon hits Megantoo deadly hard in the stomach and damages it.
+    [00:41:06] The aged starving black dragon hits Paratus deadly hard in the neck and damages it.
+    [00:41:06] The aged starving black dragon hits Starmoon deadly hard in the head and damages it.
+    [00:41:06] The aged starving black dragon hits Jort deadly hard in the left calf and damages it.
+    [00:41:06] The aged starving black dragon hits Miya deadly hard in the head and damages it.
+    [00:41:06] The aged starving black dragon hits Unholypolly deadly hard in the left foot and damages it.
+    [00:41:06] The aged starving black dragon hits Bradcubb deadly hard in the right upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Anglomango deadly hard in the left thigh and damages it.
+    [00:41:06] The aged starving black dragon hits Sirreal deadly hard in the left underarm and damages it.
+    [00:41:06] The aged starving black dragon hits Ragecg deadly hard in the right shoulder and damages it.
+    [00:41:06] The aged starving black dragon hits Xeelei deadly hard in the left underarm and damages it.
+    [00:41:06] The aged starving black dragon hits Kyrelia deadly hard in the right upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Dargol deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Kaynsable deadly hard in the right shoulder and damages it.
+    [00:41:06] The aged starving black dragon hits Kanick deadly hard in the right shoulder and damages it.
+    [00:41:06] The aged starving black dragon hits Shmoe deadly hard in the right underarm and damages it.
+    [00:41:06] The aged starving black dragon hits aged hardened worg deadly hard in the calf of the right hindleg and harms it.
+    [00:41:06] The aged starving black dragon hits Godric deadly hard in the stomach and damages it.
+    [00:41:06] The aged starving black dragon hits Tearex deadly hard in the left upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Gunvar deadly hard in the left thigh and damages it.
+    [00:41:06] The aged starving black dragon hits Nervousfish deadly hard in the left upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Screamnrobot deadly hard in the right calf and damages it.
+    [00:41:06] The aged starving black dragon hits Alantheman deadly hard in the right upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Kania deadly hard in the chest and damages it.
+    [00:41:06] The aged starving black dragon hits Lochnessm deadly hard in the left shoulder and damages it.
+    [00:41:06] The aged starving black dragon hits Linuiel deadly hard in the right upper arm and damages it.
+    [00:41:06] The aged starving black dragon hits Mirowen deadly hard in the right upper arm and harms it.
+    [00:41:06] The aged starving black dragon hits Darkterror deadly hard in the stomach and damages it.
+    [00:41:06] The aged starving black dragon hits Slavapiterskiy deadly hard in the right thigh and damages it.
+    [00:41:06] The aged starving black dragon hits Ssmokes deadly hard in the chest and harms it.
+    [00:41:06] The aged starving black dragon hits Jimson deadly hard in the right upper arm and harms it.
+    [00:41:06] The aged starving black dragon hits Victalraham deadly hard in the left calf and damages it.
+    [00:41:06] The aged starving black dragon hits Audrie deadly hard in the left foot and damages it.
+    [00:41:06] The aged starving black dragon hits Talios deadly hard in the left upper arm and damages it.
+    [00:41:06] Queenoftheunderworld regains her bearings.
+    [00:41:06] Linuiel regains his bearings.
+    [00:41:08] Zuelatek cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:41:09] You miss with the huge axe.
+    [00:41:09] Drecius regains his bearings.
+    [00:41:09] Rayen regains his bearings.
+    [00:41:09] Dalden cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:09] Freddyboy starts to cast Fire Pillar.
+    [00:41:10] Vessel regains her bearings.
+    [00:41:10] Munchkin cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:11] Unholypolly starts to cast Scorn of Libila.
+    [00:41:11] Vorlox cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:11] Ngin cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:41:12] Paratus regains his bearings.
+    [00:41:12] Alyse regains her bearings.
+    [00:41:13] Lurik cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:41:14] You cut The aged starving black dragon deadly hard in the chest and slap it.
+    [00:41:14] Okiee regains his bearings.
+    [00:41:14] Niladaya starts to cast Cure Light on Mirowen.
+    [00:41:17] Sorceress casts Scorn of Libila.
+    [00:41:17] Kyrelia regains her bearings.
+    [00:41:17] Aspirineilia cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:41:17] Synjor mauls The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:41:17] Sirreal regains his bearings.
+    [00:41:17] Dargol cuts The aged starving black dragon deadly hard in the head and slaps it.
+    [00:41:17] Draigo regains his bearings.
+    [00:41:19] Freddyboy casts Fire Pillar.
+    [00:41:20] You cut The aged starving black dragon deadly hard in the stomach and slap it.
+    [00:41:21] The aged starving black dragon wingbuffs Torkell deadly hard in the left shoulder and damages it.
+    [00:41:22] The aged starving black dragon hits Torkell deadly hard in the left upper arm and harms it.
+    [00:41:22] You start to cast Light of Fo.
+    [00:41:24] Niladaya fails to channel the 'Cure Light'.
+    [00:41:24] Minami cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:25] Unholypolly casts Scorn of Libila.
+    [00:41:25] Dylanmciam regains his bearings.
+    [00:41:27] Antongalaktiki cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:41:28] The aged starving black dragon hits Torkell deadly hard in the left shoulder and damages it.
+    [00:41:28] Synjor mauls The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:28] Dayday regains his bearings.
+    [00:41:29] Bleu cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:41:30] Tiberium regains his bearings.
+    [00:41:30] Bradcubb regains his bearings.
+    [00:41:30] Jaytoo mauls The aged starving black dragon deadly hard in the right shoulder and slaps it.
+    [00:41:32] Dalden cuts The aged starving black dragon deadly hard in the stomach and slaps it.
+    [00:41:32] Aldenela cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:41:32] Munchkin cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:41:32] Lurik cuts The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:41:33] Morphaana regains her bearings.
+    [00:41:33] Scorw regains his bearings.
+    [00:41:33] Grizwaldo pierces The aged starving black dragon deadly hard in the left underarm and slaps it.
+    [00:41:34] The aged starving black dragon hits Torkell deadly hard in the left shoulder and harms it.
+    [00:41:34] Aldurair cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:41:35] Meglegieth regains her bearings.
+    [00:41:36] Lomrandir regains his bearings.
+    [00:41:36] You cast Light of Fo.
+    [00:41:36] You heal some of your wounds with Light of Fo.
+    [00:41:37] You miss with the huge axe.
+    [00:41:37] Slavapiterskiy cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:37] You miss with the huge axe.
+    [00:41:37] Sorceress cuts The aged starving black dragon deadly hard in the chest and slaps it.
+    [00:41:37] Munchkin cuts The aged starving black dragon deadly hard in the right underarm and slaps it.
+    [00:41:38] Dargol cuts The aged starving black dragon deadly hard in the head and slaps it.
+    [00:41:38] Queenoftheunderworld regains her bearings.
+    [00:41:38] Bradcubb regains his bearings.
+    [00:41:38] Meiko regains her bearings.
+    [00:41:39] Aspirineilia cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:41:39] The aged starving black dragon hits Torkell deadly hard in the left shoulder and damages it.
+    [00:41:42] Dokhida cuts The aged starving black dragon deadly hard in the left thigh and slaps it.
+    [00:41:42] Jaytoo mauls The aged starving black dragon deadly hard in the left shoulder and slaps it.
+    [00:41:43] The aged starving black dragon barely evades the blow to the stomach.
+    [00:41:44] Shaihulud regains his bearings.
+    [00:41:44] Shmoe regains his bearings.
+    [00:41:45] Mankurt regains his bearings.
+    [00:41:45] Noobforhire regains his bearings.
+    [00:41:45] Ngin cuts The aged starving black dragon deadly hard in the right thigh and slaps it.
+    [00:41:45] Megantoo regains her bearings.
+    [00:41:46] Jaytoo mauls The aged starving black dragon deadly hard in the neck and slaps it.
+    [00:41:51] You cut The aged starving black dragon deadly hard in the left foreclaw and slap it.
+    [00:41:52] Darkterror cuts The aged starving black dragon deadly hard in the right thigh and slaps it."};
+#endregion
+    private async Task HandleValidSubmit()
+    {
+
+        Logger.LogInformation("HandleValidSubmit called");
+
+        var forecasts = await Http.PostAsJsonAsync<CombatPost>("/api/CombatLog", combatPost);
+        string filename = await forecasts.Content.ReadAsStringAsync();
+        NavManager.NavigateTo($"/CombatCreatureTable/{filename}");
+    }
+}

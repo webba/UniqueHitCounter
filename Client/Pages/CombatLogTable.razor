@@ -1,0 +1,43 @@
+﻿@page "/CombatLogTable/{page}"
+@using BlazorApp.Shared
+@using BlazorApp.Shared.Entry
+@inject HttpClient httpClient
+
+<h1>Counter</h1>
+
+@if (entry == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>StartTime</th>
+                <th>Log</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (LogEntry combatEntry in entry)
+            {
+                <tr>
+                    <td>@combatEntry.LogTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@combatEntry.Log</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+	[Parameter]
+	public string page { get; set; }
+
+    private IEnumerable<LogEntry> entry;
+
+	protected override async Task OnInitializedAsync()
+    {
+		entry = await httpClient.GetFromJsonAsync<IEnumerable<LogEntry>>($"/api/CombatLog/{page}");
+	}
+}
