@@ -21,8 +21,8 @@ namespace BlazorApp.Api
         [FunctionName("CombatLogFunction")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "CombatLog")] HttpRequest req,
-            [Blob("%FullDataName%", FileAccess.Write)] CloudBlobContainer fullDataBlob,
-            [Blob("%ResultsDataName%", FileAccess.Write)] CloudBlobContainer resultsDataBlob,
+            [Blob("%FullDataName%", FileAccess.Write, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
+            [Blob("%ResultsDataName%", FileAccess.Write, Connection = "BlobConnectionString")] CloudBlobContainer resultsDataBlob,
             ILogger log)
         {
 
@@ -69,7 +69,7 @@ namespace BlazorApp.Api
         [FunctionName("CombatLogGetFunction")]
         public static async Task<IActionResult> CombatLogGetFunction(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "CombatLog/{blobName}")] HttpRequest req,
-            [Blob("%FullDataName%", FileAccess.Read)] CloudBlobContainer fullDataBlob,
+            [Blob("%FullDataName%", FileAccess.Read, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
             ILogger log, string blobName)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -85,7 +85,7 @@ namespace BlazorApp.Api
         [FunctionName("CombatResultsGetFunction")]
         public static async Task<IActionResult> CombatResultsGetFunction(
           [HttpTrigger(AuthorizationLevel.Function, "get", Route = "CombatResults/{blobName}")] HttpRequest req,
-          [Blob("%ResultsDataName%", FileAccess.Read)] CloudBlobContainer fullDataBlob,
+          [Blob("%ResultsDataName%", FileAccess.Read, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
           ILogger log, string blobName)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
