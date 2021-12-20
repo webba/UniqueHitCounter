@@ -2,14 +2,13 @@
 @using BlazorApp.Shared
 @inject HttpClient httpClient
 
-<h1>Combat</h1>
 @if (result == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    if(tableData != null)
+    @if(keysSorted != null)
     {        
         <dl>
             <dt>Creature:</dt>
@@ -33,16 +32,28 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (CombatResult combatEntry in tableData)
+                @foreach (string vkey in keysSorted)
                 {
                     <tr>
-                        <td>@combatEntry.Player</td>
-                        <td>@combatEntry.Hits</td>
-                        <td>@combatEntry.TimesHit</td>
-                        <td>@combatEntry.TimesStunned</td>
-                        <td>@combatEntry.TimesThrown</td>
-                        <td>@combatEntry.KnocksOver</td>
-                        <td>@combatEntry.BiggestHit</td>
+                        <td>@vkey</td>
+                        @if(key == vkey)
+                        {
+                            <td>@(GetCombatResultData(vkey)?.Hits ?? 0)</td>
+                            <td>@(GetCombatResultData(vkey)?.TimesHit ?? 0)</td>
+                            <td>@(GetCombatResultData(vkey)?.TimesStunned ?? 0)</td>
+                            <td>@(GetCombatResultData(vkey)?.TimesThrown ?? 0)</td>
+                            <td>@(GetCombatResultData(vkey)?.KnocksOver ?? 0)</td>
+                            <td>@(GetCombatResultData(vkey)?.BiggestHit ?? "")</td>
+                        }
+                        else
+                        {
+                            <td>@(GetAttackerVictimCombatResult(vkey, key)?.Hits ?? 0)</td>
+                            <td>@(GetAttackerVictimCombatResult(key, vkey)?.Hits ?? 0)</td>
+                            <td>@(GetCombatResultData(vkey)?.TimesStunned ?? 0)</td>
+                            <td>@(GetCombatResultData(vkey)?.TimesThrown ?? 0)</td>
+                            <td>@(GetAttackerVictimCombatResult(vkey, key)?.KnocksOver ?? 0)</td>
+                            <td>@(GetAttackerVictimCombatResult(vkey, key)?.BiggestHit ?? "")</td>
+                        }
                     </tr>
                 }
         </tbody>
@@ -61,16 +72,45 @@ else
     public string key { get; set; }
 
     private CombatResults result;
-    private IEnumerable<CombatResult> tableData;
+    private IEnumerable<string> keysSorted;
 
     protected override async Task OnInitializedAsync()
     {
         result = await httpClient.GetFromJsonAsync<CombatResults>($"/api/CombatResults/{page}");
-        Console.WriteLine(key);
-        Console.WriteLine(result.CombatResultsDict.Keys.Contains(key));
         if(result.CombatResultsDict.Keys.Contains(key))
         {
-            tableData = result.CombatResultsDict[key].OrderByDescending(r => r.Hits);
+            keysSorted = result.CombatResultsDict.OrderByDescending(kv => kv.Value.Hits).Select(kv => kv.Key).ToList();
         }
-	}
+    }
+
+    private CreatureCombatResult GetCombatResultData(string creature)
+    {
+        if(result == null)
+        {
+            return null;
+        }
+
+        if (!result.CombatResultsDict.ContainsKey(creature))
+        {
+            return null;
+        }
+
+        return result.CombatResultsDict[creature];
+    }
+
+    private AttackerVictimCombatResult GetAttackerVictimCombatResult(string attacker, string victim)
+    {
+        var data = GetCombatResultData(attacker);
+        if(attacker == null)
+        {
+            return null;
+        }
+
+        if (!data.Attacks.ContainsKey(victim))
+        {
+            return null;
+        }
+
+        return data.Attacks[victim];
+    }
 }

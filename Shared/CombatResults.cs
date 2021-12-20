@@ -6,7 +6,7 @@ namespace BlazorApp.Shared
 {
     public class CombatResults
     {
-        public IDictionary<string, IEnumerable<CombatResult>> CombatResultsDict { get; set; }
+        public IDictionary<string, CreatureCombatResult> CombatResultsDict { get; set; }
         public string Creator { get; set; }
         public DateTime Created { get; set; }
         public DateTime FightStart { get; set; }

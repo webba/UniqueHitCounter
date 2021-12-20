@@ -3,24 +3,41 @@
 @using BlazorApp.Shared.Entry
 @inject HttpClient httpClient
 
-<h1>Combat - Creatures</h1>
-@if (result == null)
+@if (result == null || creatureKeysSorted == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
+    <dl>
+        <dt>Creatures:</dt>
+        <dd>All</dd>
+        <dt>Started at:</dt>
+        <dd>@result.FightStart.ToString("F")</dd>
+        <dt>Ended at:</dt>
+        <dd>@result.FightEnd.ToString("F")</dd>
+    </dl>
     <table class="table">
         <thead>
             <tr>
                 <th>Creature</th>
+                <th>Hits</th>
+                <th>Times Hit</th>
+                <th>Times Stunned</th>
+                <th>Knocks Senseless</th>
+                <th>Largest Hit</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (string creature in result.CombatResultsDict.Keys)
+            @foreach (string creature in creatureKeysSorted)
             {
                 <tr>
-                    <td><a href="@string.Format("/CombatResultTable/{0}/{1}", page, creature)">@creature</a></td>
+                    <td><NavLink href="@string.Format("/CombatResultTable/{0}/{1}", page, creature)">@creature</NavLink></td>
+                    <td>@result.CombatResultsDict[creature].Hits</td>
+                    <td>@result.CombatResultsDict[creature].TimesHit</td>
+                    <td>@result.CombatResultsDict[creature].TimesStunned</td>
+                    <td>@result.CombatResultsDict[creature].KnocksOver</td>
+                    <td>@result.CombatResultsDict[creature].BiggestHit</td>
                 </tr>
             }
         </tbody>
@@ -28,13 +45,17 @@ else
 }
 
 @code {
-	[Parameter]
-	public string page { get; set; }
+    [Parameter]
+    public string page { get; set; }
 
     private CombatResults result;
 
-	protected override async Task OnInitializedAsync()
+    private IEnumerable<string> creatureKeysSorted;
+
+    protected override async Task OnInitializedAsync()
     {
-		result = await httpClient.GetFromJsonAsync<CombatResults>($"/api/CombatResults/{page}");
+        result = await httpClient.GetFromJsonAsync<CombatResults>($"/api/CombatResults/{page}");
+        creatureKeysSorted = result.CombatResultsDict.OrderByDescending(kv => kv.Value.Hits).Select(kv => kv.Key).ToList();
+
 	}
 }

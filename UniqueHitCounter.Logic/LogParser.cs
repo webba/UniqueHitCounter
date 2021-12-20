@@ -35,37 +35,128 @@ namespace UniqueHitCounter.Logic
             };
         }
 
-        public IDictionary<string, IEnumerable<CombatResult>> ProcessResults(IEnumerable<LogEntry> entries)
+        public IDictionary<string, CreatureCombatResult> ProcessResults(IEnumerable<LogEntry> entries)
         {
-            var combatEntries = entries.Where(e => e is CombatEntry).Select(e => e as CombatEntry).ToList();
-            var stunEntries = entries.Where(e => e is StunEntry).Select(e => e as StunEntry).ToList();
-            var uniqueEntries = entries.Where(e => e is UniqueActionEntry).Select(e => e as UniqueActionEntry).ToList();
+            var creatureResults = new Dictionary<string, CreatureCombatResult>();
 
-            var creatures = combatEntries.SelectMany(c => new List<string> { 
-                c!.Victim, 
-                c!.Attacker 
-            }).Distinct().ToList();
-
-            var data = creatures.ToDictionary(c => c, 
-                c => (IEnumerable<CombatResult>)creatures.Select(cc => new CombatResult
+            foreach (var entry in entries)
+            {
+                if(entry is CombatEntry cEntry)
+                {
+                    if(cEntry.Attacker != null && cEntry.Victim != null)
                     {
-                        Player =  cc,
-                        Hits = combatEntries.Count(ent => ent!.Attacker == cc && ent!.Victim == c),
-                        TimesHit = combatEntries.Count(ent => ent!.Attacker == c && ent!.Victim == cc),
-                        KnocksOver = stunEntries.Count(ent => ent!.Attacker == cc 
-                            && ent!.Victim == c 
-                            && ent.StunType == StunEntry.KnocksSenseless),
-                        TimesStunned = stunEntries.Count(ent => ent!.Victim == cc
-                            && (ent.StunType == StunEntry.Regains || ent.StunType == StunEntry.BadMove)),
-                        TimesThrown = uniqueEntries.Count(ent => ent!.Attacker == c
-                            && ent!.Victim == cc
-                            && ent.ActionType == UniqueActionEntry.Throws),
-                        BiggestHit = combatEntries.Where(ent => ent!.Attacker == cc && ent!.Victim == c)
-                            .MaxBy(ent => GetDamageInt(ent!.HitResult)).FirstOrDefault()?.Log ?? "",
-                }).ToList()
-                );
+                        // Handle Attacker
+                        if (!creatureResults.ContainsKey(cEntry.Attacker))
+                        {
+                            creatureResults.Add(cEntry.Attacker, new CreatureCombatResult());
+                        }
 
-            return data;
+                        // Increment Hits
+                        creatureResults[cEntry.Attacker].Hits++;
+
+                        // Handle damage
+                        int damage = GetDamageInt(cEntry.HitResult);
+                        if(damage > creatureResults[cEntry.Attacker].BiggestHitDamage)
+                        {
+                            creatureResults[cEntry.Attacker].BiggestHitDamage = damage;
+                            creatureResults[cEntry.Attacker].BiggestHit = cEntry.Log;
+                        }
+
+                        // Handle Hit on victim
+                        if (!creatureResults[cEntry.Attacker].Attacks.ContainsKey(cEntry.Victim))
+                        {
+                            creatureResults[cEntry.Attacker].Attacks.Add(cEntry.Victim,new AttackerVictimCombatResult());
+                        }
+
+                        // Increment Hits to victim
+                        creatureResults[cEntry.Attacker].Attacks[cEntry.Victim].Hits++;
+
+                        // Handle damage to victim
+                        int damageVictim = GetDamageInt(cEntry.HitResult);
+                        if (damageVictim > creatureResults[cEntry.Attacker].Attacks[cEntry.Victim].BiggestHitDamage)
+                        {
+                            creatureResults[cEntry.Attacker].Attacks[cEntry.Victim].BiggestHitDamage = damageVictim;
+                            creatureResults[cEntry.Attacker].Attacks[cEntry.Victim].BiggestHit = cEntry.Log;
+                        }
+
+                        //Handle Victim
+                        if (!creatureResults.ContainsKey(cEntry.Victim))
+                        {
+                            creatureResults.Add(cEntry.Victim, new CreatureCombatResult());
+                        }
+
+                        // Increment Hits Recieved
+                        creatureResults[cEntry.Victim].TimesHit++;
+                    }
+                }
+                else if(entry is StunEntry stunEntry)
+                {
+                    // Handle Bad Move/Regains 
+                    if ((stunEntry.StunType == StunEntry.Regains || stunEntry.StunType == StunEntry.BadMove) && stunEntry.Victim != null)
+                    {
+                        // Handle Victim
+                        if (!creatureResults.ContainsKey(stunEntry.Victim))
+                        {
+                            creatureResults.Add(stunEntry.Victim, new CreatureCombatResult());
+                        }
+
+                        // Increment stuns
+                        creatureResults[stunEntry.Victim].TimesStunned++;
+                    }
+                    // Handle Knocks
+                    else if(stunEntry.StunType == StunEntry.KnocksSenseless && stunEntry.Attacker != null && stunEntry.Victim != null)
+                    {
+                        // Handle Attacker
+                        if (!creatureResults.ContainsKey(stunEntry.Attacker))
+                        {
+                            creatureResults.Add(stunEntry.Attacker, new CreatureCombatResult());
+                        }
+
+                        // Increment Knocks over
+                        creatureResults[stunEntry.Attacker].KnocksOver++;
+
+                        // Handle Knocked on victim
+                        if (!creatureResults[stunEntry.Attacker].Attacks.ContainsKey(stunEntry.Victim))
+                        {
+                            creatureResults[stunEntry.Attacker].Attacks.Add(stunEntry.Victim, new AttackerVictimCombatResult());
+                        }
+
+                        // Increment knocks
+                        creatureResults[stunEntry.Attacker].Attacks[stunEntry.Victim].KnocksOver++;
+                    }
+                }
+                else if (entry is UniqueActionEntry uEntry)
+                {
+                    // Handle throws
+                    if(uEntry.ActionType == UniqueActionEntry.Throws && uEntry.Attacker != null && uEntry.Victim != null)
+                    {
+                        // Handle Attacker
+                        if (!creatureResults.ContainsKey(uEntry.Attacker))
+                        {
+                            creatureResults.Add(uEntry.Attacker, new CreatureCombatResult());
+                        }
+
+                        // Handle Knocked on victim
+                        if (!creatureResults[uEntry.Attacker].Attacks.ContainsKey(uEntry.Victim))
+                        {
+                            creatureResults[uEntry.Attacker].Attacks.Add(uEntry.Victim, new AttackerVictimCombatResult());
+                        }
+
+                        // Increment Throws
+                        creatureResults[uEntry.Attacker].Attacks[uEntry.Victim].Throws++;
+
+                        // Handle Victim
+                        if (!creatureResults.ContainsKey(uEntry.Victim))
+                        {
+                            creatureResults.Add(uEntry.Victim, new CreatureCombatResult());
+                        }
+                        
+                        // Increment Times Thrown
+                        creatureResults[uEntry.Victim].TimesThrown++;
+                    }
+                }
+            }
+            return creatureResults;
         }
 
         public IEnumerable<LogEntry> ParseCombatLog()
