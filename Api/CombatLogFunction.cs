@@ -12,6 +12,7 @@ using Microsoft.Azure.Storage.Blob;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using BlazorApp.Shared.Entry;
+using System.Linq;
 
 namespace BlazorApp.Api
 {
@@ -31,27 +32,16 @@ namespace BlazorApp.Api
                 string body = await req.ReadAsStringAsync();
                 var combatPost = JsonConvert.DeserializeObject<CombatPost>(body);
                 LogParser logParser = new LogParser(combatPost);
-                IEnumerable<object> result = logParser.ParseCombatLog();
+                IEnumerable<LogEntry> result = logParser.ParseCombatLog();
 
                 var blobName = Guid.NewGuid().ToString();
                 CombatResults combatResults = new CombatResults
                 {
                     Created = DateTime.Now,
                     Creator = combatPost.Name,
-                    FightStart = DateTime.Now,
-                    FightEnd = DateTime.Now,
-                    CombatResultsList = new List<CombatResult>()
-                {
-                    new CombatResult {
-                        Player = "test",
-                        BiggestHit = "test",
-                        Hits = 10,
-                        KnocksOver = 10,
-                        TimesHit = 10,
-                        TimesStunned = 10,
-                        TimesThrown = 10
-                    }
-                }
+                    FightStart = result.Min(e => e.LogTime),
+                    FightEnd = result.Max(e => e.LogTime),
+                    CombatResultsDict = logParser.ProcessResults(result)
                 };
 
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };

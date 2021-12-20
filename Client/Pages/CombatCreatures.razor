@@ -1,0 +1,40 @@
+﻿@page "/CombatCreatureTable/{page}"
+@using BlazorApp.Shared
+@using BlazorApp.Shared.Entry
+@inject HttpClient httpClient
+
+<h1>Combat - Creatures</h1>
+@if (result == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Creature</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (string creature in result.CombatResultsDict.Keys)
+            {
+                <tr>
+                    <td><a href="@string.Format("/CombatResultTable/{0}/{1}", page, creature)">@creature</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+	[Parameter]
+	public string page { get; set; }
+
+    private CombatResults result;
+
+	protected override async Task OnInitializedAsync()
+    {
+		result = await httpClient.GetFromJsonAsync<CombatResults>($"/api/CombatResults/{page}");
+	}
+}

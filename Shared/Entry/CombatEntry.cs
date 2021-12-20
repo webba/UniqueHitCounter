@@ -38,9 +38,9 @@ namespace BlazorApp.Shared.Entry
                 {
                     Log = log.cleanedLog,
                     LogTime = log.datetime,
-                    Attacker = match.Groups[1].Value,
+                    Attacker = TextUtil.WordToUpper(match.Groups[1].Value),
                     HitType = match.Groups[2].Value,
-                    Victim = match.Groups[3].Value.ToLower() == "you" ? characterName : match.Groups[3].Value,
+                    Victim = TextUtil.WordToUpper(match.Groups[3].Value.ToLower() == "you" ? characterName : match.Groups[3].Value),
                     HitStrength = match.Groups[4].Value,
                     HitLocation = match.Groups[5].Value,
                     HitResult = match.Groups[6].Value
@@ -55,9 +55,9 @@ namespace BlazorApp.Shared.Entry
                 {
                     Log = log.cleanedLog,
                     LogTime = log.datetime,
-                    Attacker = characterName,
+                    Attacker = TextUtil.WordToUpper(characterName),
                     HitType = match.Groups[2].Value,
-                    Victim = match.Groups[3].Value,
+                    Victim = TextUtil.WordToUpper(match.Groups[3].Value),
                     HitStrength = match.Groups[4].Value,
                     HitLocation = match.Groups[5].Value,
                     HitResult = match.Groups[6].Value

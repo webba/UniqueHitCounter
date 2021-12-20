@@ -1,8 +1,10 @@
 ﻿using BlazorApp.Shared;
 using BlazorApp.Shared.Entry;
-
+using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace UniqueHitCounter.Logic
@@ -17,6 +19,53 @@ namespace UniqueHitCounter.Logic
         {
             _LogPost = post;
             _CurrentTime = post.StartDate;
+        }
+
+        public static int GetDamageInt(string damage)
+        {
+            return damage switch
+            {
+                "tickle" => 1,
+                "slap" => 2,
+                "irritate" => 3,
+                "hurt" => 4,
+                "harm" => 5,
+                "damage" => 6,    
+                _ => 0
+            };
+        }
+
+        public IDictionary<string, IEnumerable<CombatResult>> ProcessResults(IEnumerable<LogEntry> entries)
+        {
+            var combatEntries = entries.Where(e => e is CombatEntry).Select(e => e as CombatEntry).ToList();
+            var stunEntries = entries.Where(e => e is StunEntry).Select(e => e as StunEntry).ToList();
+            var uniqueEntries = entries.Where(e => e is UniqueActionEntry).Select(e => e as UniqueActionEntry).ToList();
+
+            var creatures = combatEntries.SelectMany(c => new List<string> { 
+                c!.Victim, 
+                c!.Attacker 
+            }).Distinct().ToList();
+
+            var data = creatures.ToDictionary(c => c, 
+                c => (IEnumerable<CombatResult>)creatures.Select(cc => new CombatResult
+                    {
+                        Player =  cc,
+                        Hits = combatEntries.Count(ent => ent!.Attacker == cc && ent!.Victim == c),
+                        TimesHit = combatEntries.Count(ent => ent!.Attacker == c && ent!.Victim == cc),
+                        KnocksOver = stunEntries.Count(ent => ent!.Attacker == cc 
+                            && ent!.Victim == c 
+                            && ent.StunType == StunEntry.KnocksSenseless),
+                        TimesStunned = stunEntries.Count(ent => ent!.Victim == cc
+                            && (ent.StunType == StunEntry.Regains || ent.StunType == StunEntry.BadMove)),
+                        TimesThrown = uniqueEntries.Count(ent => ent!.Attacker == c
+                            && ent!.Victim == cc
+                            && ent.ActionType == UniqueActionEntry.Throws),
+                        BiggestHit = combatEntries.Where(ent => ent!.Attacker == cc && ent!.Victim == c)
+                            .MaxBy(ent => GetDamageInt(ent!.HitResult)).FirstOrDefault()?.Log ?? "",
+                }).ToList()
+                );
+
+            return data;
         }
 
         public IEnumerable<LogEntry> ParseCombatLog()

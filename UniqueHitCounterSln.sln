@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{3DC4D146-5318-4FB7-B96D-91E6DFD7AEBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniqueHitCounter.Logic", "UniqueHitCounter.Logic\UniqueHitCounter.Logic.csproj", "{AB686FE1-0488-430E-99E9-3095D0A41BAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniqueHitCounter.Logic", "UniqueHitCounter.Logic\UniqueHitCounter.Logic.csproj", "{AB686FE1-0488-430E-99E9-3095D0A41BAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

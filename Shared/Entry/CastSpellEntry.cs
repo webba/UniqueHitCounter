@@ -175,6 +175,7 @@ namespace BlazorApp.Shared.Entry
                 {
                     caster = characterName;
                 }
+                caster = TextUtil.WordToUpper(caster);
 
                 if (target != null)
                 {
@@ -186,6 +187,7 @@ namespace BlazorApp.Shared.Entry
                     {
                         target = caster;
                     }
+                    target = TextUtil.WordToUpper(target);
                 }
                 return new CastSpellEntry(log, caster, spell, target, isStart, spellResult);
 
