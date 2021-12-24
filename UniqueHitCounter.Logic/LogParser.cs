@@ -19,7 +19,11 @@ namespace UniqueHitCounter.Logic
         public LogParser(CombatPost post)
         {
             _LogPost = post;
-            _CurrentTime = post.StartDate;
+            if(post.StartDate != null)
+            {
+                _CurrentTime = post.StartDate;
+                _HasFirstDate = true;
+            }
         }
 
         public static int GetDamageInt(string damage)
@@ -253,7 +257,7 @@ namespace UniqueHitCounter.Logic
                             }
 
                             lastTime = logEntry.LogTime.TimeOfDay;
-                            logEntry.LogTime = _CurrentTime.AddDays(-1 * backDays).Add(logEntry.LogTime.TimeOfDay);
+                            logEntry.LogTime = _CurrentTime?.AddDays(-1 * backDays).Add(logEntry.LogTime.TimeOfDay) ?? logEntry.LogTime;
                         }
                         _HasFirstDate = true;
                     }
@@ -315,7 +319,7 @@ namespace UniqueHitCounter.Logic
             switch (logSegments.Length)
             {
                 case 1:
-                    DateTime dateTime = _CurrentTime == null ? DateTime.UtcNow.AddSeconds(lineNumber) : _CurrentTime.AddSeconds(lineNumber);
+                    DateTime dateTime = _CurrentTime ?? DateTime.UtcNow.AddSeconds(lineNumber);
                     return (CleanLogLine(logLine), dateTime);
                 case 2:
                     string v = logSegments[0].Replace("[", String.Empty);
@@ -324,10 +328,10 @@ namespace UniqueHitCounter.Logic
                     {
                         if (timeSpan < new TimeSpan(15, 0, 0) && _LastTime.Value.TimeOfDay > new TimeSpan(15, 0, 0))
                         {
-                            _CurrentTime = _CurrentTime.AddDays(1);
+                            _CurrentTime = _CurrentTime?.AddDays(1);
                         }
                     }
-                    DateTime dateTime1 = _CurrentTime + timeSpan;
+                    DateTime dateTime1 = (_CurrentTime ?? DateTime.Today) + timeSpan;
                     _LastTime = dateTime1;
                     return (CleanLogLine(logSegments[1]), dateTime1);
                 case 3:
