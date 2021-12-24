@@ -7,25 +7,34 @@ namespace BlazorApp.Shared.ViewModels
 {
     public class TableResultsData
     {
-        [Display(Name = "Name")]
+        public const string DisplayCreatureName = "Name";
+        public const string DisplayHits = "Hits";
+        public const string DisplayTimesHit = "Times Hit";
+        public const string DisplayTimesStunned = "Times Stunned";
+        public const string DisplayTimesThrown = "Times Thrown";
+        public const string DisplayKnocksSenseless = "Knocks";
+        public const string DisplayBiggestHit = "Biggest Hit";
+
+
+        [Display(Name = DisplayCreatureName)]
         public string CreatureName { get; set; }
 
-        [Display(Name = "Hits")]
+        [Display(Name = DisplayHits)]
         public int Hits { get; set; }
 
-        [Display(Name = "Times Hit")]
+        [Display(Name = DisplayTimesHit)]
         public int TimesHit { get; set; }
 
-        [Display(Name = "Times Stunned")]
+        [Display(Name = DisplayTimesStunned)]
         public int TimesStunned { get; set; }
 
-        [Display(Name = "Times Thrown")]
+        [Display(Name = DisplayTimesThrown)]
         public int TimesThrown { get; set; }
 
-        [Display(Name = "Knocks")]
+        [Display(Name = DisplayKnocksSenseless)]
         public int KnocksSenseless { get; set; }
 
-        [Display(Name = "Biggest Hit")]
+        [Display(Name = DisplayBiggestHit)]
         public string BiggestHit { get; set; }
     }
 }
