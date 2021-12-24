@@ -6,6 +6,8 @@ namespace BlazorApp.Shared
 {
     public class CreatureCombatResult
     {
+        public DateTime? FirstTime { get; set; }
+        public DateTime? LastTime { get; set; }
         public int Hits { get; set; }
         public int TimesHit { get; set; }
         public int TimesStunned { get; set; }

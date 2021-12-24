@@ -1,6 +1,8 @@
 ﻿@page "/CombatCreatureTable/{page}"
 @using BlazorApp.Shared
 @using BlazorApp.Shared.Entry
+@using BlazorApp.Shared.ViewModels
+@using System.ComponentModel
 @inject HttpClient httpClient
 
 @if (result == null || creatureKeysSorted == null)
@@ -17,31 +19,30 @@ else
         <dt>Ended at:</dt>
         <dd>@result.FightEnd.ToString("F")</dd>
     </dl>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Creature</th>
-                <th>Hits</th>
-                <th>Times Hit</th>
-                <th>Times Stunned</th>
-                <th>Knocks Senseless</th>
-                <th>Largest Hit</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (string creature in creatureKeysSorted)
-            {
-                <tr>
-                    <td><NavLink href="@string.Format("/CombatResultTable/{0}/{1}", page, creature)">@creature</NavLink></td>
-                    <td>@result.CombatResultsDict[creature].Hits</td>
-                    <td>@result.CombatResultsDict[creature].TimesHit</td>
-                    <td>@result.CombatResultsDict[creature].TimesStunned</td>
-                    <td>@result.CombatResultsDict[creature].KnocksOver</td>
-                    <td>@result.CombatResultsDict[creature].BiggestHit</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <DataGrid TItem="TableResultsData"
+          Data="@tableData"
+          ShowPager="true"
+          PageSize="500"
+          Responsive>
+        <DataGridColumn TItem="TableResultsData" Field="@nameof(TableResultsData.CreatureName)"
+                    Caption="@TableResultsData.DisplayCreatureName" Sortable="true">
+            <DisplayTemplate>
+                <NavLink href="@string.Format("/CombatResultTable/{0}/{1}", page, context.CreatureName)">@context.CreatureName</NavLink>
+            </DisplayTemplate>
+        </DataGridColumn>
+        <DataGridColumn TItem="TableResultsData" Field="@nameof(TableResultsData.Hits)"
+                    Caption="@TableResultsData.DisplayHits" Sortable="true" SortDirection="Blazorise.SortDirection.Descending"></DataGridColumn>
+        <DataGridColumn TItem="TableResultsData" Field="@nameof(TableResultsData.TimesHit)"
+                    Caption="@TableResultsData.DisplayTimesHit" Sortable="true"></DataGridColumn>
+        <DataGridColumn TItem="TableResultsData" Field="@nameof(TableResultsData.TimesStunned)"
+                    Caption="@TableResultsData.DisplayTimesStunned" Sortable="true"></DataGridColumn>
+        <DataGridColumn TItem="TableResultsData" Field="@nameof(TableResultsData.TimesThrown)"
+                    Caption="@TableResultsData.DisplayTimesThrown" Sortable="true"></DataGridColumn>
+        <DataGridColumn TItem="TableResultsData" Field="@nameof(TableResultsData.KnocksSenseless)"
+                    Caption="@TableResultsData.DisplayKnocksSenseless" Sortable="true"></DataGridColumn>
+        <DataGridColumn TItem="TableResultsData" Field="@nameof(TableResultsData.BiggestHit)"
+                    Caption="@TableResultsData.DisplayBiggestHit" Sortable="true"></DataGridColumn>
+    </DataGrid>
 }
 
 @code {
@@ -49,6 +50,7 @@ else
     public string page { get; set; }
 
     private CombatResults result;
+    private IList<TableResultsData> tableData;
 
     private IEnumerable<string> creatureKeysSorted;
 
@@ -56,6 +58,20 @@ else
     {
         result = await httpClient.GetFromJsonAsync<CombatResults>($"/api/CombatResults/{page}");
         creatureKeysSorted = result.CombatResultsDict.OrderByDescending(kv => kv.Value.Hits).Select(kv => kv.Key).ToList();
+        tableData = new List<TableResultsData>();
+        foreach (var creature in result.CombatResultsDict.Keys)
+        {
+            tableData.Add(new TableResultsData()
+                {
+                    CreatureName = creature,
+                    Hits = result.GetCombatResultData(creature)?.Hits ?? 0,
+                    TimesHit = result.GetCombatResultData(creature)?.TimesHit ?? 0,
+                    TimesStunned = result.GetCombatResultData(creature)?.TimesStunned ?? 0,
+                    TimesThrown = result.GetCombatResultData(creature)?.TimesThrown ?? 0,
+                    KnocksSenseless = result.GetCombatResultData(creature)?.KnocksOver ?? 0,
+                    BiggestHit = result.GetCombatResultData(creature)?.BiggestHit ?? ""
+                });
+        }
 
-	}
+    }
 }

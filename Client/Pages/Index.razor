@@ -8,7 +8,7 @@
 
 <EditForm Model="@combatPost" OnValidSubmit="@HandleValidSubmit" class="form-group">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    <Blazorise.ValidationSummary />
     <div class="form-group">
         <label>
             Character Name:
@@ -41,12 +41,15 @@
     {
 
         Logger.LogInformation("HandleValidSubmit called");
-        hideLoader = false;
+        if (hideLoader)
+        {
+            hideLoader = false;
 
-        var forecasts = await Http.PostAsJsonAsync<CombatPost>("/api/CombatLog", combatPost);
-        string filename = await forecasts.Content.ReadAsStringAsync();
+            var forecasts = await Http.PostAsJsonAsync<CombatPost>("/api/CombatLog", combatPost);
+            string filename = await forecasts.Content.ReadAsStringAsync();
 
-        hideLoader = true;
-        NavManager.NavigateTo($"/CombatCreatureTable/{filename}");
+            hideLoader = true;
+            NavManager.NavigateTo($"/CombatCreatureTable/{filename}");
+        }
     }
 }
