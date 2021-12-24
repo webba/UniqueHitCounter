@@ -12,7 +12,7 @@ namespace UniqueHitCounter.Logic
     public class LogParser
     {
         private readonly CombatPost _LogPost;
-        private DateTime _CurrentTime;
+        private DateTime? _CurrentTime = null;
         private DateTime? _LastTime = null;
         private bool _HasFirstDate = false;
 
