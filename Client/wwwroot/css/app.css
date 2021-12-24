@@ -126,6 +126,39 @@ app {
     }
 }
 
+.cursor-pointer{
+    cursor:pointer;
+}
+
+.fa {
+    width: 1.5rem;
+    height: 1rem;
+    opacity: 0.4;
+    flex-shrink: 0;
+    text-align: center;
+    padding-right: 0.2rem;
+    display: inline-block;
+    align-items: center;
+    background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAxNiAyOCI+PGcgaWQ9Imljb21vb24taWdub3JlIj48L2c+PHBhdGggZD0iTTE2IDE3cTAgMC40MDYtMC4yOTcgMC43MDNsLTcgN3EtMC4yOTcgMC4yOTctMC43MDMgMC4yOTd0LTAuNzAzLTAuMjk3bC03LTdxLTAuMjk3LTAuMjk3LTAuMjk3LTAuNzAzdDAuMjk3LTAuNzAzIDAuNzAzLTAuMjk3aDE0cTAuNDA2IDAgMC43MDMgMC4yOTd0MC4yOTcgMC43MDN6TTE2IDExcTAgMC40MDYtMC4yOTcgMC43MDN0LTAuNzAzIDAuMjk3aC0xNHEtMC40MDYgMC0wLjcwMy0wLjI5N3QtMC4yOTctMC43MDMgMC4yOTctMC43MDNsNy03cTAuMjk3LTAuMjk3IDAuNzAzLTAuMjk3dDAuNzAzIDAuMjk3bDcgN3EwLjI5NyAwLjI5NyAwLjI5NyAwLjcwM3oiIGZpbGw9IiMwMDAwMDAiPjwvcGF0aD48L3N2Zz4=);
+    background-size: contain;
+    background-position: 30% 50%;
+    background-repeat: no-repeat;
+}
+
+.fa-sort-up:before {
+    content: '▲';
+}
+
+.fa-sort-down:before {
+    content: '▼';
+}
+
+.fa-sort-up, .fa-sort-down {
+    background: none;
+    opacity: 0.6;
+    margin-top: -0.6rem;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;

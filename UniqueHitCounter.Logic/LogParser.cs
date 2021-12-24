@@ -14,6 +14,7 @@ namespace UniqueHitCounter.Logic
         private readonly CombatPost _LogPost;
         private DateTime _CurrentTime;
         private DateTime? _LastTime = null;
+        private bool _HasFirstDate = false;
 
         public LogParser(CombatPost post)
         {
@@ -51,6 +52,16 @@ namespace UniqueHitCounter.Logic
                             creatureResults.Add(cEntry.Attacker, new CreatureCombatResult());
                         }
 
+                        // Poll attacker First/LastTime
+                        if(creatureResults[cEntry.Attacker].FirstTime == null || entry.LogTime < creatureResults[cEntry.Attacker].FirstTime)
+                        {
+                            creatureResults[cEntry.Attacker].FirstTime = entry.LogTime;
+                        }
+                        if (creatureResults[cEntry.Attacker].LastTime == null || entry.LogTime > creatureResults[cEntry.Attacker].LastTime)
+                        {
+                            creatureResults[cEntry.Attacker].LastTime = entry.LogTime;
+                        }
+
                         // Increment Hits
                         creatureResults[cEntry.Attacker].Hits++;
 
@@ -85,6 +96,16 @@ namespace UniqueHitCounter.Logic
                             creatureResults.Add(cEntry.Victim, new CreatureCombatResult());
                         }
 
+                        // Poll victim First/LastTime
+                        if (creatureResults[cEntry.Victim].FirstTime == null || entry.LogTime < creatureResults[cEntry.Victim].FirstTime)
+                        {
+                            creatureResults[cEntry.Victim].FirstTime = entry.LogTime;
+                        }
+                        if (creatureResults[cEntry.Victim].LastTime == null || entry.LogTime > creatureResults[cEntry.Victim].LastTime)
+                        {
+                            creatureResults[cEntry.Victim].LastTime = entry.LogTime;
+                        }
+
                         // Increment Hits Recieved
                         creatureResults[cEntry.Victim].TimesHit++;
                     }
@@ -100,6 +121,16 @@ namespace UniqueHitCounter.Logic
                             creatureResults.Add(stunEntry.Victim, new CreatureCombatResult());
                         }
 
+                        // Poll victim First/LastTime
+                        if (creatureResults[stunEntry.Victim].FirstTime == null || entry.LogTime < creatureResults[stunEntry.Victim].FirstTime)
+                        {
+                            creatureResults[stunEntry.Victim].FirstTime = entry.LogTime;
+                        }
+                        if (creatureResults[stunEntry.Victim].LastTime == null || entry.LogTime > creatureResults[stunEntry.Victim].LastTime)
+                        {
+                            creatureResults[stunEntry.Victim].LastTime = entry.LogTime;
+                        }
+
                         // Increment stuns
                         creatureResults[stunEntry.Victim].TimesStunned++;
                     }
@@ -112,6 +143,16 @@ namespace UniqueHitCounter.Logic
                             creatureResults.Add(stunEntry.Attacker, new CreatureCombatResult());
                         }
 
+                        // Poll attacker First/LastTime
+                        if (creatureResults[stunEntry.Attacker].FirstTime == null || entry.LogTime < creatureResults[stunEntry.Attacker].FirstTime)
+                        {
+                            creatureResults[stunEntry.Attacker].FirstTime = entry.LogTime;
+                        }
+                        if (creatureResults[stunEntry.Attacker].LastTime == null || entry.LogTime > creatureResults[stunEntry.Attacker].LastTime)
+                        {
+                            creatureResults[stunEntry.Attacker].LastTime = entry.LogTime;
+                        }
+
                         // Increment Knocks over
                         creatureResults[stunEntry.Attacker].KnocksOver++;
 
@@ -119,6 +160,16 @@ namespace UniqueHitCounter.Logic
                         if (!creatureResults[stunEntry.Attacker].Attacks.ContainsKey(stunEntry.Victim))
                         {
                             creatureResults[stunEntry.Attacker].Attacks.Add(stunEntry.Victim, new AttackerVictimCombatResult());
+                        }
+
+                        // Poll victim First/LastTime
+                        if (creatureResults[stunEntry.Victim].FirstTime == null || entry.LogTime < creatureResults[stunEntry.Victim].FirstTime)
+                        {
+                            creatureResults[stunEntry.Victim].FirstTime = entry.LogTime;
+                        }
+                        if (creatureResults[stunEntry.Victim].LastTime == null || entry.LogTime > creatureResults[stunEntry.Victim].LastTime)
+                        {
+                            creatureResults[stunEntry.Victim].LastTime = entry.LogTime;
                         }
 
                         // Increment knocks
@@ -136,10 +187,20 @@ namespace UniqueHitCounter.Logic
                             creatureResults.Add(uEntry.Attacker, new CreatureCombatResult());
                         }
 
-                        // Handle Knocked on victim
+                        // Handle victim
                         if (!creatureResults[uEntry.Attacker].Attacks.ContainsKey(uEntry.Victim))
                         {
                             creatureResults[uEntry.Attacker].Attacks.Add(uEntry.Victim, new AttackerVictimCombatResult());
+                        }
+
+                        // Poll attacker First/LastTime
+                        if (creatureResults[uEntry.Attacker].FirstTime == null || entry.LogTime < creatureResults[uEntry.Attacker].FirstTime)
+                        {
+                            creatureResults[uEntry.Attacker].FirstTime = entry.LogTime;
+                        }
+                        if (creatureResults[uEntry.Attacker].LastTime == null || entry.LogTime > creatureResults[uEntry.Attacker].LastTime)
+                        {
+                            creatureResults[uEntry.Attacker].LastTime = entry.LogTime;
                         }
 
                         // Increment Throws
@@ -150,7 +211,17 @@ namespace UniqueHitCounter.Logic
                         {
                             creatureResults.Add(uEntry.Victim, new CreatureCombatResult());
                         }
-                        
+
+                        // Poll victim First/LastTime
+                        if (creatureResults[uEntry.Victim].FirstTime == null || entry.LogTime < creatureResults[uEntry.Victim].FirstTime)
+                        {
+                            creatureResults[uEntry.Victim].FirstTime = entry.LogTime;
+                        }
+                        if (creatureResults[uEntry.Victim].LastTime == null || entry.LogTime > creatureResults[uEntry.Victim].LastTime)
+                        {
+                            creatureResults[uEntry.Victim].LastTime = entry.LogTime;
+                        }
+
                         // Increment Times Thrown
                         creatureResults[uEntry.Victim].TimesThrown++;
                     }
@@ -167,10 +238,25 @@ namespace UniqueHitCounter.Logic
             for (int i = 0; i < combatLines.Length; i++)
             {
                 string line = combatLines[i].Trim();
-                Console.WriteLine(line);
                 if (line.StartsWith("Logging started"))
                 {
                     SetCurrentTimeFromLoggingStarted(line);
+                    if (!_HasFirstDate)
+                    {
+                        foreach(LogEntry logEntry in result.Reverse())
+                        {
+                            int backDays = 0;
+                            TimeSpan lastTime = new TimeSpan(0, 0, 0);
+                            if(logEntry.LogTime.TimeOfDay > lastTime)
+                            {
+                                backDays++;
+                            }
+
+                            lastTime = logEntry.LogTime.TimeOfDay;
+                            logEntry.LogTime = _CurrentTime.AddDays(-1 * backDays).Add(logEntry.LogTime.TimeOfDay);
+                        }
+                        _HasFirstDate = true;
+                    }
                     continue;
                 }
 
@@ -249,6 +335,7 @@ namespace UniqueHitCounter.Logic
                     DateTime.TryParse(dateSegment1, out DateTime dateTime3);
                     string timeSegment = logSegments[1].Replace("[", String.Empty);
                     TimeSpan.TryParse(timeSegment, out TimeSpan timeSpan3);
+                    _HasFirstDate = true;
                     return (CleanLogLine(logSegments[2]), dateTime3 + timeSpan3);
                 default:
                     throw new ArgumentOutOfRangeException($"Logline contains to many segments: {logLine}");

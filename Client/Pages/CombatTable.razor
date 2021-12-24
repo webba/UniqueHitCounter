@@ -1,5 +1,8 @@
 ﻿@page "/CombatResultTable/{page}/{key}/"
+@using Blazm.Components
 @using BlazorApp.Shared
+@using BlazorApp.Shared.ViewModels
+@using System.ComponentModel
 @inject HttpClient httpClient
 
 @if (result == null)
@@ -14,50 +17,21 @@ else
             <dt>Creature:</dt>
             <dd>@key</dd>
             <dt>Started at:</dt>
-            <dd>@result.FightStart.ToString("F")</dd>
+            <dd>@GetFightStartString()</dd>
             <dt>Ended at:</dt>
-            <dd>@result.FightEnd.ToString("F")</dd>
+            <dd>@GetFightEndString()</dd>
         </dl>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Player</th>
-				    <th>Hits</th>
-				    <th>Times Hit</th>
-				    <th>Times Stunned</th>
-				    <th>Times Thrown</th>
-				    <th>Knocks Over</th>
-				    <th>Biggest Hit</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (string vkey in keysSorted)
-                {
-                    <tr>
-                        <td>@vkey</td>
-                        @if(key == vkey)
-                        {
-                            <td>@(GetCombatResultData(vkey)?.Hits ?? 0)</td>
-                            <td>@(GetCombatResultData(vkey)?.TimesHit ?? 0)</td>
-                            <td>@(GetCombatResultData(vkey)?.TimesStunned ?? 0)</td>
-                            <td>@(GetCombatResultData(vkey)?.TimesThrown ?? 0)</td>
-                            <td>@(GetCombatResultData(vkey)?.KnocksOver ?? 0)</td>
-                            <td>@(GetCombatResultData(vkey)?.BiggestHit ?? "")</td>
-                        }
-                        else
-                        {
-                            <td>@(GetAttackerVictimCombatResult(vkey, key)?.Hits ?? 0)</td>
-                            <td>@(GetAttackerVictimCombatResult(key, vkey)?.Hits ?? 0)</td>
-                            <td>@(GetCombatResultData(vkey)?.TimesStunned ?? 0)</td>
-                            <td>@(GetCombatResultData(vkey)?.TimesThrown ?? 0)</td>
-                            <td>@(GetAttackerVictimCombatResult(vkey, key)?.KnocksOver ?? 0)</td>
-                            <td>@(GetAttackerVictimCombatResult(vkey, key)?.BiggestHit ?? "")</td>
-                        }
-                    </tr>
-                }
-        </tbody>
-        </table>
+        <BlazmGrid Data="@tableData" Sortable="true" SortField="@nameof(TableResultsData.Hits)" SortDirection="ListSortDirection.Descending">
+            <GridColumns>
+                <GridColumn Field="@nameof(TableResultsData.CreatureName)"/>
+                <GridColumn Field="@nameof(TableResultsData.Hits)"/>
+                <GridColumn Field="@nameof(TableResultsData.TimesHit)"/>
+                <GridColumn Field="@nameof(TableResultsData.TimesStunned)"/>
+                <GridColumn Field="@nameof(TableResultsData.TimesThrown)"/>
+                <GridColumn Field="@nameof(TableResultsData.KnocksSenseless)"/>
+                <GridColumn Field="@nameof(TableResultsData.BiggestHit)"/>
+            </GridColumns>
+        </BlazmGrid>
     }
     else
     {
@@ -73,6 +47,7 @@ else
 
     private CombatResults result;
     private IEnumerable<string> keysSorted;
+    private IList<TableResultsData> tableData;
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,7 +55,57 @@ else
         if(result.CombatResultsDict.Keys.Contains(key))
         {
             keysSorted = result.CombatResultsDict.OrderByDescending(kv => kv.Value.Hits).Select(kv => kv.Key).ToList();
+            tableData = new List<TableResultsData>();
+            foreach(var creature in result.CombatResultsDict.Keys)
+            {
+                if(key == creature)
+                {
+                    tableData.Add(new TableResultsData()
+                        {
+                            CreatureName = creature,
+                            Hits = GetCombatResultData(creature)?.Hits ?? 0,
+                            TimesHit = GetCombatResultData(creature)?.TimesHit ?? 0,
+                            TimesStunned = GetCombatResultData(creature)?.TimesStunned ?? 0,
+                            TimesThrown = GetCombatResultData(creature)?.TimesThrown ?? 0,
+                            KnocksSenseless = GetCombatResultData(creature)?.KnocksOver ?? 0,
+                            BiggestHit = GetCombatResultData(creature)?.BiggestHit ?? ""
+                        });
+                }
+                else
+                {
+                    tableData.Add(new TableResultsData()
+                        {
+                            CreatureName = creature,
+                            Hits = GetAttackerVictimCombatResult(creature, key)?.Hits ?? 0,
+                            TimesHit = GetAttackerVictimCombatResult(key, creature)?.Hits ?? 0,
+                            TimesStunned = GetCombatResultData(creature)?.TimesStunned ?? 0,
+                            TimesThrown = GetCombatResultData(creature)?.TimesThrown ?? 0,
+                            KnocksSenseless = GetAttackerVictimCombatResult(creature, key)?.KnocksOver ?? 0,
+                            BiggestHit = GetAttackerVictimCombatResult(creature, key)?.BiggestHit ?? ""
+                        });
+                }
+            }
         }
+    }
+
+    private string GetFightStartString()
+    {
+        var creatureData = GetCombatResultData(key);
+        if(creatureData == null || creatureData.FirstTime == null)
+        {
+            return result.FightStart.ToString("F");
+        }
+        return creatureData.FirstTime?.ToString("F") ?? "";
+    }
+
+    private string GetFightEndString()
+    {
+        var creatureData = GetCombatResultData(key);
+        if(creatureData == null || creatureData.LastTime == null)
+        {
+            return result.FightEnd.ToString("F");
+        }
+        return creatureData.LastTime?.ToString("F") ?? "";
     }
 
     private CreatureCombatResult GetCombatResultData(string creature)
