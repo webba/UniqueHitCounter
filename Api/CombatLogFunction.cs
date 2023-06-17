@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using BlazorApp.Shared;
 using UniqueHitCounter.Logic;
-using Microsoft.Azure.Storage.Blob;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using BlazorApp.Shared.Entry;
 using System.Linq;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using System.Reflection.Metadata;
 
 namespace BlazorApp.Api
 {
@@ -21,8 +23,8 @@ namespace BlazorApp.Api
         [FunctionName("CombatLogFunction")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "CombatLog")] HttpRequest req,
-            [Blob("%FullDataName%", FileAccess.Write, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
-            [Blob("%ResultsDataName%", FileAccess.Write, Connection = "BlobConnectionString")] CloudBlobContainer resultsDataBlob,
+            [Blob("%FullDataName%", FileAccess.Write, Connection = "BlobConnectionString")] BlobContainerClient fullDataBlob,
+            [Blob("%ResultsDataName%", FileAccess.Write, Connection = "BlobConnectionString")] BlobContainerClient resultsDataBlob,
             ILogger log)
         {
 
@@ -59,23 +61,25 @@ namespace BlazorApp.Api
             }
         }
 
-        private static async Task SaveFile(CloudBlobContainer fullDataBlob, string result, string blobName)
+        private static async Task SaveFile(BlobContainerClient fullDataBlob, string result, string blobName)
         {
-            var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
-            fullBlockBlob.Properties.ContentType = "text/json";
-            await fullBlockBlob.UploadTextAsync(result);
+            var fullBlockBlob = fullDataBlob.GetBlobClient(blobName);
+
+            var blobHttpHeader = new BlobHttpHeaders { ContentType = "text/json" };
+            await fullBlockBlob.UploadAsync(BinaryData.FromString(result),  new BlobUploadOptions { HttpHeaders = blobHttpHeader });
         }
 
         [FunctionName("CombatLogGetFunction")]
         public static async Task<IActionResult> CombatLogGetFunction(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "CombatLog/{blobName}")] HttpRequest req,
-            [Blob("%FullDataName%", FileAccess.Read, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
+            [Blob("%FullDataName%", FileAccess.Read, Connection = "BlobConnectionString")] BlobContainerClient fullDataBlob,
             ILogger log, string blobName)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
-            string v = await fullBlockBlob.DownloadTextAsync();
+            var fullBlockBlob = fullDataBlob.GetBlobClient(blobName);
+            var response = await fullBlockBlob.DownloadContentAsync();
+            string v = response.Value.Content.ToString();
             JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
             IEnumerable<LogEntry> combatEntry = JsonConvert.DeserializeObject<IEnumerable<LogEntry>>(v, settings);
 
@@ -85,13 +89,14 @@ namespace BlazorApp.Api
         [FunctionName("CombatResultsGetFunction")]
         public static async Task<IActionResult> CombatResultsGetFunction(
           [HttpTrigger(AuthorizationLevel.Function, "get", Route = "CombatResults/{blobName}")] HttpRequest req,
-          [Blob("%ResultsDataName%", FileAccess.Read, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
+          [Blob("%ResultsDataName%", FileAccess.Read, Connection = "BlobConnectionString")] BlobContainerClient fullDataBlob,
           ILogger log, string blobName)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
-            string v = await fullBlockBlob.DownloadTextAsync();
+            var fullBlockBlob = fullDataBlob.GetBlobClient(blobName);
+            var response = await fullBlockBlob.DownloadContentAsync();
+            string v = response.Value.Content.ToString();
 
             CombatResults combatEntry = JsonConvert.DeserializeObject<CombatResults>(v);
 
@@ -101,13 +106,14 @@ namespace BlazorApp.Api
         [FunctionName("OldDataGetFunction")]
         public static async Task<IActionResult> OldDataGetFunction(
           [HttpTrigger(AuthorizationLevel.Function, "get", Route = "OldData/{blobName}")] HttpRequest req,
-          [Blob("%OldDataName%", FileAccess.Read, Connection = "BlobConnectionString")] CloudBlobContainer fullDataBlob,
+          [Blob("%OldDataName%", FileAccess.Read, Connection = "BlobConnectionString")] BlobContainerClient fullDataBlob,
           ILogger log, string blobName)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var fullBlockBlob = fullDataBlob.GetBlockBlobReference(blobName);
-            string v = await fullBlockBlob.DownloadTextAsync();
+            var fullBlockBlob = fullDataBlob.GetBlobClient(blobName);
+            var response = await fullBlockBlob.DownloadContentAsync();
+            string v = response.Value.Content.ToString();
 
             IEnumerable<OldDataEntry> data = JsonConvert.DeserializeObject<IEnumerable<OldDataEntry>>(v);
 
