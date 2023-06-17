@@ -26,7 +26,7 @@ namespace BlazorApp.Api
 
         [Function("CombatLog")]
         public async Task<HttpResponseData> PostCombatLog(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CombatLog")] HttpRequestData req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "CombatLog")] HttpRequestData req)
         {
 
             try
@@ -64,7 +64,7 @@ namespace BlazorApp.Api
 
         [Function("GetCombatLogsFunction")]
         public async Task<HttpResponseData> GetCombatLogs(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "CombatLog/{blobName}")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "CombatLog/{blobName}")] HttpRequestData req,
             string blobName)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
@@ -79,7 +79,7 @@ namespace BlazorApp.Api
 
         [Function("GetCombatResultsFunction")]
         public async Task<HttpResponseData> GetCombatResults(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "CombatResults/{blobName}")] HttpRequestData req,
+          [HttpTrigger(AuthorizationLevel.Function, "get", Route = "CombatResults/{blobName}")] HttpRequestData req,
           string blobName)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
@@ -94,7 +94,7 @@ namespace BlazorApp.Api
 
         [Function("GetOldDataFunction")]
         public async Task<HttpResponseData> GetOldData(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "OldData/{blobName}")] HttpRequestData req,
+          [HttpTrigger(AuthorizationLevel.Function, "get", Route = "OldData/{blobName}")] HttpRequestData req,
           string blobName)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
